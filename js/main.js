@@ -15,8 +15,17 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
     testMessage = JSON.parse(message);
+    test();
 });
 
 function test() {
+    let variable = document.getElementById('feld');
     console.log(testMessage);
+    variable.innerText = '';
+
+    for (let player of testMessage) {
+        console.log(player.name + player.color);
+        variable.innerText += (player.name + ', ' + player.color + '\n');
+    }
+
 }
