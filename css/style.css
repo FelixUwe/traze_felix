@@ -1,3 +1,32 @@
 .message-button {
     font-size: larger;
 }
+.heading1{
+    color: blue;
+}
+.heading2{
+    color: hotpink;
+}
+.heading3{
+color: coral;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.spielerinfo {
+    margin-right: 200px;
+}
+
+.feld1{
+    background-color: cyan;
+}
+.feld2{
+    background-color: azure;
+}
+.feld3{
+
+}
