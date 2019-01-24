@@ -1,23 +1,18 @@
 const url = 'wss://traze.iteratec.de:9443';
-const playerTopic = 'traze/1/players';
-const gridTopic = 'traze/1/grid';
-const tickerTopic  = 'traze/1/ticker';
-const joinTopic = 'traze/1/join';
-const hfTopic = 'traze/1/player/123497130x47913';
+
 
 const topics = [
-    playerTopic,
-    tickerTopic,
-    gridTopic,
-    joinTopic,
-    hfTopic
+    'traze/1/players',
+    'traze/1/grid',
+    'traze/1/join',
+    'traze/1/player/223497130x47913'
 ];
 
 const newTopics = {
     hf : 'traze/1/player/123497130x47913'
 };
 
-let client = mqtt.connect(url, {clientId: '123497130x47913'});
+let client = mqtt.connect(url, {clientId: '223497130x47913'});
 let testMessage = '';
 
 let playerMessage = '';
@@ -34,18 +29,18 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
 
-    if (topic !== topics[0] && topic !== topics[2]) {
+    if(topic === topics[3]){
         console.log(JSON.parse(message));
+        playerInformation();
     }
+
     if (topic === topics[0]) {
         playerMessage = JSON.parse(message);
     }
-    else if (topic === topics[1]){
-        tickerMessage = JSON.parse(message);
-    }
-    else if(topic === topics[2]){
+    if(topic === topics[1]){
         gridMessage = JSON.parse(message);
     }
+
 });
 
 function playerInformation(){
@@ -67,16 +62,17 @@ function joinGame(){
 
     let joinMsg = {
         name: "ANT-MAN!",
-        mqttClientName: "123497130x47913"
+        mqttClientName: "223497130x47913"
     };
 
-    client.publish(joinTopic,JSON.stringify(joinMsg));
+    client.publish(topics[2],JSON.stringify(joinMsg));
+    console.log(topics[2]);
 
 
 }
 
 function test() {
     playerInformation();
-    
+
 
 }
