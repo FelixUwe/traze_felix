@@ -1,14 +1,13 @@
 .message-button {
     font-size: larger;
+    background-color: black;
+    color: #44cef3;
+    font-style: oblique;
 }
-.heading1{
-    color: blue;
-}
-.heading2{
-    color: hotpink;
-}
-.heading3{
-color: coral;
+
+h3 {
+    color: #44cef3;
+    font-style: oblique;
 }
 
 .container {
@@ -18,11 +17,18 @@ color: coral;
 }
 
 .spielerinfo {
+    margin-right: 100px;
+
+}
+.myPlayer{
+    margin-right: 100px;
+}
+.gridinfo{
     margin-right: 200px;
 }
 
 .feld1{
-    background-color: cyan;
+    background-color: lightblue;
 }
 .feld2{
     background-color: azure;
@@ -30,3 +36,12 @@ color: coral;
 .feld3{
 
 }
+
+.background{
+    background-color: black;
+    border-color: #44cef3;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
