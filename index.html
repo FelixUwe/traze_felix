@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,20 +13,23 @@
     <meta charset="UTF-8">
     <title>Traze</title>
 </head>
-<body>
+<body class="background">
 
-    <button onclick="joinGame()" class="message-button">Join Game</button>
-    <button onclick="test()" class="message-button">test</button>
 
-    <div class="container">
-        <div class="spielerinfo">
-            <h3 class="heading1"> Player information: </h3>
-            <div class="feld1" id="feld1"></div>
-        </div>
-        <h3 class="heading2"> Ticker: </h3>
-        <div class="feld2" id="feld2"></div>
-        <h3 class="heading3"> Grid information: </h3>
-        <div class="feld3" id="feld3"></div>
+<button onclick="joinGame()" class="message-button">Join Game</button>
+<button onclick="test()" class="message-button">test</button>
+
+<div class="container">
+    <div class="spielerinfo">
+        <h3 class="heading1"> Player information: </h3>
+        <div class="feld1" id="feld1"></div>
     </div>
+    <div class="myPlayer"> <h3 class="heading2"> My Player: </h3>
+        <div class="feld2" id="feld2"></div> </div>
+
+    <div class="gridinfo"> <h3 class="heading3"> Grid information: </h3>
+        <div class="feld3" id="feld3"></div> </div>
+
+</div>
 </body>
 </html>
