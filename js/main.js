@@ -23,31 +23,34 @@ function connect() {
     client = mqtt.connect(url, {clientId: playerId});
 
     joinGame();
+
+
+    client.on('connect', function () {
+        client.subscribe(topics, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    client.on('message', function (topic, message) {
+
+        if(topic === topics[3]){
+            console.log(JSON.parse(message));
+            playerInformation();
+        }
+
+        if (topic === topics[0]) {
+            playerMessage = JSON.parse(message);
+        }
+        if(topic === topics[1]){
+            gridMessage = JSON.parse(message);
+        }
+
+    });
 }
 
-client.on('connect', function () {
-    client.subscribe(topics, function (err) {
-        if (err) {
-            console.log(err);
-        }
-    });
-});
 
-client.on('message', function (topic, message) {
-
-    if(topic === topics[3]){
-        console.log(JSON.parse(message));
-        playerInformation();
-    }
-
-    if (topic === topics[0]) {
-        playerMessage = JSON.parse(message);
-    }
-    if(topic === topics[1]){
-        gridMessage = JSON.parse(message);
-    }
-
-});
 
 function playerInformation(){
     document.getElementById('feld1').innerText = '';
