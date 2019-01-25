@@ -11,7 +11,7 @@ const topics = [
 ];
 
 
-let client = playerId;
+let client = null;
 // hinter clientID war die ID
 let testMessage = '';
 
@@ -20,9 +20,9 @@ let tickerMessage = '';
 let gridMessage = '';
 
 function connect() {
-    let userId = pickNewID();
-    console.log(userId);
-    client = mqtt.connect(url, {clientId: ''});
+    client = mqtt.connect(url, {clientId: playerId});
+
+    joinGame();
 }
 
 client.on('connect', function () {
@@ -68,7 +68,7 @@ function joinGame(){
 
     let joinMsg = {
         name: "ANT-MAN!",
-        mqttClientName: "playerId"
+        mqttClientName: playerId
         // hinter ClientName war die ID
     };
 
