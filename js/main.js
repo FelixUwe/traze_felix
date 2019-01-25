@@ -29,6 +29,8 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
 
+    test 123
+
     if(topic === topics[3]){
         console.log(JSON.parse(message));
         playerInformation();
