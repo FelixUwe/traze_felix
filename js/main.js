@@ -84,7 +84,6 @@ function joinGame(){
 
     client.publish(topics[2],JSON.stringify(joinMsg));
     console.log(topics[2]);
-    console.log(bailTopic);
     //
 }
 
@@ -123,8 +122,8 @@ function steuerInput() {
 }
 
 function leave() {
-    console.log(secretToken);
-    let bailMessage = 'playerToken' + secretToken;
+    let bailMessage = {playerToken : secretToken};
+    console.log(bailTopic);
     console.log(bailMessage);
     client.publish(bailTopic, JSON.stringify(bailMessage));
 }
