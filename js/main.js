@@ -1,18 +1,18 @@
 const url = 'wss://traze.iteratec.de:9443';
 
-const playerId = pickNewID();
-let playerId2 = '';
+const clientId = pickNewID();
+let playerId = '';
 
 const topics = [
     'traze/1/players',
     'traze/1/grid',
     'traze/1/join',
-    'traze/1/player/' + playerId
+    'traze/1/player/' + clientId
     // hinter player/ war die ID
 ];
 
 
-let client = mqtt.connect(url, {clientId: playerId});
+let client = mqtt.connect(url, {clientId: clientId});
 let testMessage = '';
 
 let playerMessage = '';
@@ -39,10 +39,10 @@ client.on('message', function (topic, message) {
         message = JSON.parse(message);
         console.log(message);
         secretToken =  message.secretUserToken;
-        playerId2 = message.id;
-        steerTopic = 'traze/1/' + playerId2 + '/steer';
-        bailTopic = 'traze/1/' + playerId2 + '/bail';
-        console.log(playerId2);
+        playerId = message.id;
+        steerTopic = 'traze/1/' + playerId + '/steer';
+        bailTopic = 'traze/1/' + playerId + '/bail';
+        console.log(playerId);
 
 
         playerInformation();
@@ -50,6 +50,7 @@ client.on('message', function (topic, message) {
 
     if (topic === topics[0]) {
         playerMessage = JSON.parse(message);
+        playerInformation();
     }
     if(topic === topics[1]){
         gridMessage = JSON.parse(message);
@@ -76,7 +77,7 @@ function joinGame(){
 
     let joinMsg = {
         name: "ANT-MAN!",
-        mqttClientName: playerId
+        mqttClientName: clientId
     };
 
     steuerInput();
@@ -90,7 +91,7 @@ function joinGame(){
 function test() {
     console.log(topics);
     playerInformation();
-    console.log(playerId2);
+    console.log(playerId);
 }
 
 function steuern(richtung) {
