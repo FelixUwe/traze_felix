@@ -1,6 +1,7 @@
 const url = 'wss://traze.iteratec.de:9443';
 
 const playerId = pickNewID();
+let playerId2 = '';
 
 const topics = [
     'traze/1/players',
@@ -11,19 +12,18 @@ const topics = [
 ];
 
 
-let client = playerId;
-// hinter clientID war die ID
+let client = mqtt.connect(url, {clientId: playerId});
 let testMessage = '';
 
 let playerMessage = '';
 let tickerMessage = '';
 let gridMessage = '';
 
-function connect() {
-    let userId = pickNewID();
-    console.log(userId);
-    client = mqtt.connect(url, {clientId: ''});
-}
+let secretToken = '';
+let steerTopic = '';
+let bailTopic = '';
+
+
 
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
@@ -36,7 +36,15 @@ client.on('connect', function () {
 client.on('message', function (topic, message) {
 
     if(topic === topics[3]){
-        console.log(JSON.parse(message));
+        message = JSON.parse(message);
+        console.log(message);
+        secretToken =  message.secretUserToken;
+        playerId2 = message.id;
+        steerTopic = 'traze/1/' + playerId2 + '/steer';
+        bailTopic = 'traze/1/' + playerId2 + '/bail';
+        console.log(playerId2);
+
+
         playerInformation();
     }
 
@@ -68,21 +76,56 @@ function joinGame(){
 
     let joinMsg = {
         name: "ANT-MAN!",
-        mqttClientName: "playerId"
-        // hinter ClientName war die ID
+        mqttClientName: playerId
     };
+
+    steuerInput();
 
     client.publish(topics[2],JSON.stringify(joinMsg));
     console.log(topics[2]);
-
-
+    console.log(bailTopic);
+    //
 }
 
 function test() {
     console.log(topics);
     playerInformation();
+    console.log(playerId2);
+}
 
+function steuern(richtung) {
+    let steuernMessage = {course: richtung, playerToken: secretToken };
+    console.log(steerTopic, JSON.stringify(steuernMessage));
+    client.publish(steerTopic, JSON.stringify(steuernMessage));
+}
 
+function steuerInput() {
+    document.addEventListener('keydown', event => {
+        event = event || window.event;
+        // W
+       if (event.keyCode == '87'){
+            steuern('N');
+       }
+       // A
+       else if (event.keyCode == '65'){
+           steuern('W');
+        }
+       // S
+       else if (event.keyCode == '83'){
+           steuern('S');
+       }
+       // D
+       else if (event.keyCode == '68'){
+           steuern('E');
+       }
+    });
+}
+
+function leave() {
+    console.log(secretToken);
+    let bailMessage = 'playerToken' + secretToken;
+    console.log(bailMessage);
+    client.publish(bailTopic, JSON.stringify(bailMessage));
 }
 
 function pickNewID() {

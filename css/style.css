@@ -18,11 +18,18 @@ color: coral;
 }
 
 .spielerinfo {
+    margin-right: 100px;
+
+}
+.myPlayer{
+    margin-right: 100px;
+}
+.gridinfo{
     margin-right: 200px;
 }
 
 .feld1{
-    background-color: cyan;
+    background-color: lightblue;
 }
 .feld2{
     background-color: azure;
