@@ -54,7 +54,10 @@ client.on('message', function (topic, message) {
     }
     if(topic === topics[1]){
         gridMessage = JSON.parse(message);
+        console.log(gridMessage.tiles[0][0]);
+        client.end();
     }
+
 
 });
 
