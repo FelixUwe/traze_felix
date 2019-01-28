@@ -74,9 +74,10 @@ function playerInformation(){
 
 
 function joinGame(){
+    let playerName = document.getElementById("playerNameInput").value;
 
     let joinMsg = {
-        name: "ANT-MAN!",
+        name: playerName,
         mqttClientName: clientId
     };
 
@@ -120,6 +121,23 @@ function steuerInput() {
        }
     });
 }
+
+function rechtsSteuern() {
+    steuern('E');
+};
+
+function obenSteuern() {
+    steuern('N');
+};
+
+function linksSteuern() {
+    steuern('W');
+};
+
+function untenSteuern() {
+    steuern('S');
+};
+
 
 function leave() {
     let bailMessage = {playerToken : secretToken};
