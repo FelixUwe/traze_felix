@@ -7,12 +7,10 @@ const topics = [
     'traze/1/grid',
     'traze/1/join',
     'traze/1/player/' + playerId
-    // hinter player/ war die ID
 ];
 
 
 let client = null;
-// hinter clientID war die ID
 let testMessage = '';
 
 let playerMessage = '';
@@ -72,7 +70,6 @@ function joinGame(){
     let joinMsg = {
         name: "ANT-MAN!",
         mqttClientName: playerId
-        // hinter ClientName war die ID
     };
 
     client.publish(topics[2],JSON.stringify(joinMsg));
