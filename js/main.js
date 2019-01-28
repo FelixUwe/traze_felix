@@ -30,7 +30,6 @@ client.on('connect', function () {
             console.log(err);
         }
     });
-    gridErstellen();
 });
 
 client.on('message', function (topic, message) {
@@ -54,7 +53,7 @@ client.on('message', function (topic, message) {
     }
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
-        console.log(gridMessage.tiles[0][0]);
+        gridErstellen(gridMessage);
         client.end();
     }
 
@@ -163,10 +162,12 @@ function pickNewID() {
 
 }
 
-function gridErstellen() {
-    for (let i = 0; i < 62; i++) {
-        for (let j = 0; j < 62; j++) {
-
+function gridErstellen(gridMessage) {
+    let tiles = gridMessage.tiles;
+    for (let i = 0; i < tiles.length; i++) {
+        for (let j = 0; j < tiles.length; j++) {
+           console.log(i);
+           
         }
     }
 }
