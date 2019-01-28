@@ -22,6 +22,8 @@ let gridMessage = '';
 
 let secretToken = '';
 let steerTopic = '';
+let bailTopic = '';
+
 
 
 client.on('connect', function () {
@@ -40,7 +42,9 @@ client.on('message', function (topic, message) {
         secretToken =  message.secretUserToken;
         playerId2 = message.id;
         steerTopic = 'traze/1/' + playerId2 + '/steer';
+        bailTopic = 'traze/1/' + playerId2 + '/bail';
         console.log(playerId2);
+
 
         playerInformation();
     }
@@ -80,12 +84,12 @@ function joinGame(){
 
     client.publish(topics[2],JSON.stringify(joinMsg));
     console.log(topics[2]);
+    console.log(bailTopic);
     //
 }
 
 function test() {
     playerInformation();
-    console.log(secretToken);
     console.log(playerId2);
 
 }
@@ -116,4 +120,10 @@ function steuerInput() {
            steuern('E');
        }
     });
+}
+function leave() {
+    console.log(secretToken);
+    let bailMessage = 'playerToken' + secretToken;
+    console.log(bailMessage);
+    client.publish(bailTopic, JSON.stringify(bailMessage));
 }
