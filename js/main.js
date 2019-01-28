@@ -24,21 +24,21 @@ let steerTopic = '';
 let bailTopic = '';
 
 
-
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
         if (err) {
             console.log(err);
         }
     });
+    gridErstellen();
 });
 
 client.on('message', function (topic, message) {
 
-    if(topic === topics[3]){
+    if (topic === topics[3]) {
         message = JSON.parse(message);
         console.log(message);
-        secretToken =  message.secretUserToken;
+        secretToken = message.secretUserToken;
         playerId = message.id;
         steerTopic = 'traze/1/' + playerId + '/steer';
         bailTopic = 'traze/1/' + playerId + '/bail';
@@ -52,7 +52,7 @@ client.on('message', function (topic, message) {
         playerMessage = JSON.parse(message);
         playerInformation();
     }
-    if(topic === topics[1]){
+    if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
         console.log(gridMessage.tiles[0][0]);
         client.end();
@@ -61,7 +61,7 @@ client.on('message', function (topic, message) {
 
 });
 
-function playerInformation(){
+function playerInformation() {
     document.getElementById('feld1').innerText = '';
 
     for (player of playerMessage) {
@@ -76,7 +76,7 @@ function playerInformation(){
 }
 
 
-function joinGame(){
+function joinGame() {
     let playerName = document.getElementById("playerNameInput").value;
 
     let joinMsg = {
@@ -86,7 +86,7 @@ function joinGame(){
 
     steuerInput();
 
-    client.publish(topics[2],JSON.stringify(joinMsg));
+    client.publish(topics[2], JSON.stringify(joinMsg));
     console.log(topics[2]);
     //
 }
@@ -98,7 +98,7 @@ function test() {
 }
 
 function steuern(richtung) {
-    let steuernMessage = {course: richtung, playerToken: secretToken };
+    let steuernMessage = {course: richtung, playerToken: secretToken};
     console.log(steerTopic, JSON.stringify(steuernMessage));
     client.publish(steerTopic, JSON.stringify(steuernMessage));
 }
@@ -107,21 +107,21 @@ function steuerInput() {
     document.addEventListener('keydown', event => {
         event = event || window.event;
         // W
-       if (event.keyCode == '87'){
+        if (event.keyCode == '87') {
             steuern('N');
-       }
-       // A
-       else if (event.keyCode == '65'){
-           steuern('W');
         }
-       // S
-       else if (event.keyCode == '83'){
-           steuern('S');
-       }
-       // D
-       else if (event.keyCode == '68'){
-           steuern('E');
-       }
+        // A
+        else if (event.keyCode == '65') {
+            steuern('W');
+        }
+        // S
+        else if (event.keyCode == '83') {
+            steuern('S');
+        }
+        // D
+        else if (event.keyCode == '68') {
+            steuern('E');
+        }
     });
 }
 
@@ -143,7 +143,7 @@ function untenSteuern() {
 
 
 function leave() {
-    let bailMessage = {playerToken : secretToken};
+    let bailMessage = {playerToken: secretToken};
     console.log(bailTopic);
     console.log(bailMessage);
     client.publish(bailTopic, JSON.stringify(bailMessage));
@@ -151,14 +151,22 @@ function leave() {
 
 function pickNewID() {
     let d = new Date().getTime();
-    if(Date.now){
+    if (Date.now) {
         d = Date.now(); //high-precision timer
     }
-    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        let r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
 
+}
+
+function gridErstellen() {
+    for (let i = 0; i < 62; i++) {
+        for (let j = 0; j < 62; j++) {
+
+        }
+    }
 }

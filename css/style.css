@@ -47,4 +47,13 @@ h3 {
     border-width: 1px;
 }
 
+.canvas {
+    height: 372px;
+    width: 372px;
+    background: #44cef3;
+    margin: 20px;
+}
 
+.textbox{
+    color: #44cef3;
+}
