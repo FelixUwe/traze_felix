@@ -60,14 +60,13 @@ client.on('message', function (topic, message) {
 
 function playerInformation(){
     document.getElementById('tf1').innerText = '';
+    document.getElementById('tf2').innerText = '';
+    document.getElementById('tf3').innerText = '';
 
     for (player of playerMessage) {
         document.getElementById('tf1').innerText += player.name + '\n';
-
         document.getElementById('tf2').innerText += player.frags + '\n';
-        client.end();
         document.getElementById('tf3').innerText += player.owned + '\n';
-        client.end();
     }
 
     document.getElementById('feld2').innerHTML = tickerMessage;
