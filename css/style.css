@@ -57,3 +57,11 @@ h3 {
 .textbox{
     color: #44cef3;
 }
+
+.message-button2{
+    font-size: larger;
+    background-color: black;
+    color: #44cef3;
+    font-style: oblique;
+    margin-left: 35px;
+}
