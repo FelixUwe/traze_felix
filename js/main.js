@@ -1,5 +1,5 @@
 const url = 'wss://traze.iteratec.de:9443';
-
+const tiles = 62;
 const clientId = pickNewID();
 let playerId = '';
 
@@ -23,6 +23,7 @@ let secretToken = '';
 let steerTopic = '';
 let bailTopic = '';
 
+let id_to_color = {};
 
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
@@ -50,20 +51,52 @@ client.on('message', function (topic, message) {
     if (topic === topics[0]) {
         playerMessage = JSON.parse(message);
         playerInformation();
+        let playerCount = playerMessage
     }
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
+        drawPlayer();
+         //console.log(gridMessage);
+
         // gridErstellen(gridMessage);
+        // console.log(gridMessage.bikes[0].currentLocation);
+        // let position = gridMessage.bikes[0].currentLocation;
+        // console.log(position);
+        //
+        // for (player of playerMessage) {
+        // console.log(playerMessage[0].color);
+        //     let player = gridMessage.bikes;
+        //     // console.log(player);
+        // }
+
     }
 
 
 });
+
+function drawPlayer() {
+
+    for (let i = 0; i < tiles; i++) {
+        for (let j = 0; j < tiles; j++) {
+            if (gridMessage.tiles[i][j] != 0) {
+                let idDieWirBrauchen = gridMessage.tiles[i][j];
+                console.log(id_to_color[idDieWirBrauchen]);
+                // wir brauchen die Farbe von dem Spieler mit der idDieWirBrauchen
+                // console.log(playerMessage);
+                // console.log(playerMessage[0].color);
+
+            }
+
+        }
+    }
+}
 
 function playerInformation() {
     document.getElementById('feld1').innerText = '';
 
     for (player of playerMessage) {
         document.getElementById('feld1').innerText += player.name + '\n';
+        id_to_color[player.id] = player.color;
     }
 
     document.getElementById('feld2').innerHTML = tickerMessage;
@@ -164,8 +197,7 @@ function pickNewID() {
 function showGrid() {
 
     let spielfeld = document.getElementById("Spielfeld");
-    let tiles = 62;
-
+    console.log(gridMessage);
     for (let i = 0; i < tiles; i++) {
         let row = document.createElement("div");
         for (let j = 0; j < tiles; j++) {
@@ -176,3 +208,4 @@ function showGrid() {
     }
 
 }
+
