@@ -53,7 +53,7 @@ client.on('message', function (topic, message) {
     }
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
-        gridErstellen(gridMessage);
+        // gridErstellen(gridMessage);
     }
 
 
@@ -161,11 +161,18 @@ function pickNewID() {
 
 }
 
-function gridErstellen(gridMessage) {
-    let tiles = gridMessage.tiles;
-    for (let i = 0; i < tiles.length; i++) {
-        for (let j = 0; j < tiles.length; j++) {
+function showGrid() {
 
+    let spielfeld = document.getElementById("Spielfeld");
+    let tiles = 62;
+
+    for (let i = 0; i < tiles; i++) {
+        let row = document.createElement("div");
+        for (let j = 0; j < tiles; j++) {
+            let cell = document.createElement("span");
+            row.appendChild(cell);
         }
+        spielfeld.appendChild(row);
     }
+
 }
