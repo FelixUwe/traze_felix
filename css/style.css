@@ -5,7 +5,7 @@
     font-style: oblique;
 }
 
-h3 {
+h2 {
     color: #44cef3;
     font-style: oblique;
 }
@@ -49,4 +49,6 @@ h3 {
 .tabelle{
     color: #44cef3;
 }
-
+.kopfzeile{
+    font-style: oblique;
+}
