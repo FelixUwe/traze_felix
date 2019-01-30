@@ -17,13 +17,14 @@ let testMessage = '';
 
 let playerMessage = '';
 let tickerMessage = '';
-let gridMessage = '';
+let gridMessage = {};
 
 let secretToken = '';
 let steerTopic = '';
 let bailTopic = '';
 
 let id_to_color = {};
+let id_to_position = {};
 
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
@@ -34,7 +35,6 @@ client.on('connect', function () {
 });
 
 client.on('message', function (topic, message) {
-
     if (topic === topics[3]) {
         message = JSON.parse(message);
         console.log(message);
@@ -42,7 +42,7 @@ client.on('message', function (topic, message) {
         playerId = message.id;
         steerTopic = 'traze/1/' + playerId + '/steer';
         bailTopic = 'traze/1/' + playerId + '/bail';
-        console.log(playerId);
+        // console.log(playerId);
 
 
         playerInformation();
@@ -56,7 +56,7 @@ client.on('message', function (topic, message) {
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
         drawPlayer();
-         //console.log(gridMessage);
+        //console.log(gridMessage);
 
         // gridErstellen(gridMessage);
         // console.log(gridMessage.bikes[0].currentLocation);
@@ -75,20 +75,56 @@ client.on('message', function (topic, message) {
 });
 
 function drawPlayer() {
+    let spielfelder = document.getElementsByTagName("span");
 
-    for (let i = 0; i < tiles; i++) {
-        for (let j = 0; j < tiles; j++) {
-            if (gridMessage.tiles[i][j] != 0) {
-                let idDieWirBrauchen = gridMessage.tiles[i][j];
-                console.log(id_to_color[idDieWirBrauchen]);
-                // wir brauchen die Farbe von dem Spieler mit der idDieWirBrauchen
-                // console.log(playerMessage);
-                // console.log(playerMessage[0].color);
-
-            }
-
+    for (player of gridMessage.bikes) {
+        id_to_position[player.playerId] = {
+            trail: player.trail,
+            currentlocation: player.currentLocation
         }
     }
+
+
+    for (player of playerMessage) {
+        let x = gridMessage.bikes[0].currentLocation[0];
+        let y = gridMessage.bikes[0].currentLocation[1];
+
+        // console.log(gridMessage.bikes[0].trail);
+
+        if (player.id === gridMessage.tiles[x][y]) {
+            console.log(player.color);
+        }
+        // for (feld of spielfelder) {
+        //     if (id_to_position[player].currentlocation == feld.attributes.fieldId) {
+        //     }
+        // }
+    }
+
+    // for (feld of spielfelder) {
+    //     if (id_to_position.currentlocation == feld.fieldId) {
+    //         // spielfelder.id = {i, j};
+    //         console.log(feld.fieldId);
+    //         console.log(id_to_position.currentlocation);
+    //         document.getElementById("Hi").attributes[1].value =  "background: id_to_color";
+    //         console.log(document.getElementById("Hi").attributes[1].value);
+    //         spielfelder.fieldId = {i, j};
+    //
+    //     }
+    // }
+
+
+    // for (let i = 0; i < tiles; i++) {
+    //     for (let j = 0; j < tiles; j++) {
+    //         if (gridMessage.tiles[i][j] != 0) {
+    //             let idDieWirBrauchen = gridMessage.tiles[i][j];
+    //
+    //
+    //
+    //
+    //
+    //         }
+    //     }
+    // }
 }
 
 function playerInformation() {
@@ -102,7 +138,7 @@ function playerInformation() {
     document.getElementById('feld2').innerHTML = tickerMessage;
     document.getElementById('feld3').innerHTML = gridMessage;
 
-    //console.log(playerMessage);
+    // console.log(gridMessage);
     // document.getElementById('feld1').innerHTML = playerInformation;
 }
 
@@ -126,6 +162,8 @@ function test() {
     console.log(topics);
     playerInformation();
     console.log(playerId);
+    console.log(playerMessage);
+    console.log(gridMessage);
 }
 
 function steuern(richtung) {
@@ -197,15 +235,25 @@ function pickNewID() {
 function showGrid() {
 
     let spielfeld = document.getElementById("Spielfeld");
-    console.log(gridMessage);
+    let div = document.getElementsByTagName("span");
+    // let div2 = document.getElementsByTagName("span");
+
+    // console.log(gridMessage);
     for (let i = 0; i < tiles; i++) {
+        // div.id
         let row = document.createElement("div");
         for (let j = 0; j < tiles; j++) {
             let cell = document.createElement("span");
             row.appendChild(cell);
+            cell.setAttribute("style", "");
+            cell.fieldId = {i, j};
+            cell.setAttribute("id", "asd");
+            // console.log(JSON.parse(cell.id));
+            // div2.id = {id: div.id+j};
+            //console.log(div.id);
+            // x und y Attribute machen etc.
         }
         spielfeld.appendChild(row);
     }
-
 }
 
