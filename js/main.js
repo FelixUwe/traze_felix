@@ -22,8 +22,16 @@ let secretToken = '';
 let steerTopic = '';
 let bailTopic = '';
 
+let i = '';
+let j = '';
+
 let id_to_color = {};
 let id_to_position = {};
+
+let cell = '';
+
+let spielerFarben = {};
+let playerCount = '';
 
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
@@ -49,12 +57,18 @@ client.on('message', function (topic, message) {
 
     if (topic === topics[0]) {
         playerMessage = JSON.parse(message);
+        spielerAnzahl = playerMessage.length;
+        // console.log(spielerAnzahl);
+        for (i = 0; i < spielerAnzahl; i++) {
+            playerCount = i;
+            // console.log(playerCount);
+        }
         playerInformation();
-        let playerCount = playerMessage
+        message = JSON.parse(message);
     }
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
-        drawPlayer();
+        drawPlayer(gridMessage);
         //console.log(gridMessage);
 
         // gridErstellen(gridMessage);
@@ -73,70 +87,38 @@ client.on('message', function (topic, message) {
 
 });
 
-function drawPlayer() {
-    let spielfelder = document.getElementsByTagName("span");
-
-    for (player of gridMessage.bikes) {
-        id_to_position[player.playerId] = {
-            trail: player.trail,
-            currentlocation: player.currentLocation
+function drawPlayer(gridMessage) {
+    for (let x = 0; x < gridMessage.tiles.length; x++) {
+        for (let y = 0; y < gridMessage.tiles.length; y++) {
+             playerId = gridMessage.tiles[x][y];
+            cell = document.getElementById(x+"-"+y);
+            if(cell)
+            {
+                cell.style.background = id_to_color[playerId];
+            }
+            else {
+                console.log("cell " + x + "-" + y + " not found");
+            }
         }
     }
+}
 
-
-    for (player of playerMessage) {
-        let x = gridMessage.bikes[0].currentLocation[0];
-        let y = gridMessage.bikes[0].currentLocation[1];
-
-        // console.log(gridMessage.bikes[0].trail);
-
-        if (player.id === gridMessage.tiles[x][y]) {
-            // console.log(player.color);
-        }
-        // for (feld of spielfelder) {
-        //     if (id_to_position[player].currentlocation == feld.attributes.fieldId) {
-        //     }
-        // }
-    }
-
-    // for (feld of spielfelder) {
-    //     if (id_to_position.currentlocation == feld.fieldId) {
-    //         // spielfelder.id = {i, j};
-    //         console.log(feld.fieldId);
-    //         console.log(id_to_position.currentlocation);
-    //         document.getElementById("Hi").attributes[1].value =  "background: id_to_color";
-    //         console.log(document.getElementById("Hi").attributes[1].value);
-    //         spielfelder.fieldId = {i, j};
-    //
-    //     }
-    // }
-    for (player of playerMessage) {
-        id_to_color[player.id] = player.color;
-    }
-
-    // for (let i = 0; i < tiles; i++) {
-    //     for (let j = 0; j < tiles; j++) {
-    //         if (gridMessage.tiles[i][j] != 0) {
-    //             let idDieWirBrauchen = gridMessage.tiles[i][j];
-    //
-    //
-    //
-    //
-    //
-    //         }
-    //     }
-    // }
+function Farben(message) {
+    message.forEach(player => {
+        spielerFarben[playerId] = player.color;
+    })
 }
 
 function playerInformation(){
     document.getElementById('tf1').innerText = '';
     document.getElementById('tf2').innerText = '';
-    document.getElementById('tf3').innerText = '';
 
     for (player of playerMessage) {
         document.getElementById('tf1').innerText += player.name + '\n';
         document.getElementById('tf2').innerText += player.frags + '\n';
-        document.getElementById('tf3').innerText += player.owned + '\n';
+
+        // map player id to color every 5 seconds (on player topic)
+        id_to_color[player.id] = player.color;
     }
 
     // document.getElementById('feld2').innerHTML = tickerMessage;
@@ -168,11 +150,13 @@ function test() {
     console.log(playerId);
     console.log(playerMessage);
     console.log(gridMessage);
+    console.log(cell);
+
 }
 
 function steuern(richtung) {
     let steuernMessage = {course: richtung, playerToken: secretToken };
-    console.log(steerTopic, JSON.stringify(steuernMessage));
+    // console.log(steerTopic, JSON.stringify(steuernMessage));
     client.publish(steerTopic, JSON.stringify(steuernMessage));
 }
 
@@ -243,21 +227,14 @@ function showGrid() {
     // let div2 = document.getElementsByTagName("span");
 
     // console.log(gridMessage);
-    for (let i = 0; i < tiles; i++) {
+    for ( i = 0; i < tiles; i++) {
         // div.id
         let row = document.createElement("div");
-        for (let j = 0; j < tiles; j++) {
+        for ( j = 0; j < tiles; j++) {
             let cell = document.createElement("span");
+            cell.id = "" + i + "-" + j;
             row.appendChild(cell);
-            cell.setAttribute("style", "");
-            cell.fieldId = {i, j};
-            cell.setAttribute("id", "asd");
-            // console.log(JSON.parse(cell.id));
-            // div2.id = {id: div.id+j};
-            //console.log(div.id);
-            // x und y Attribute machen etc.
         }
         spielfeld.appendChild(row);
     }
 }
-
