@@ -26,6 +26,9 @@ let bailTopic = '';
 let id_to_color = {};
 let id_to_position = {};
 
+let spielerFarben = {};
+let playerCount = '';
+
 client.on('connect', function () {
     client.subscribe(topics, function (err) {
         if (err) {
@@ -50,12 +53,18 @@ client.on('message', function (topic, message) {
 
     if (topic === topics[0]) {
         playerMessage = JSON.parse(message);
+        spielerAnzahl = playerMessage.length;
+        // console.log(spielerAnzahl);
+        for (i = 0; i < spielerAnzahl; i++) {
+            playerCount = i;
+            // console.log(playerCount);
+        }
         playerInformation();
-        let playerCount = playerMessage
+        message = JSON.parse(message);
     }
     if (topic === topics[1]) {
         gridMessage = JSON.parse(message);
-        drawPlayer();
+        drawPlayer(gridMessage);
         //console.log(gridMessage);
 
         // gridErstellen(gridMessage);
@@ -74,8 +83,10 @@ client.on('message', function (topic, message) {
 
 });
 
-function drawPlayer() {
+function drawPlayer(gridMessage) {
     let spielfelder = document.getElementsByTagName("span");
+
+    const spielfeldGefülltMitSpielerFarben = gridMessage.tiles.map(reihe => reihe.map(feld => spielerFarben[feld]));
 
     for (player of gridMessage.bikes) {
         id_to_position[player.playerId] = {
@@ -86,11 +97,12 @@ function drawPlayer() {
 
 
     for (player of playerMessage) {
-        let x = gridMessage.bikes[0].currentLocation[0];
-        let y = gridMessage.bikes[0].currentLocation[1];
-
+        let x = gridMessage.bikes[playerCount].currentLocation[0];
+        let y = gridMessage.bikes[playerCount].currentLocation[1];
+        // console.log(x);
+        // console.log(y);
         // console.log(gridMessage.bikes[0].trail);
-
+        console.log(playerCount);
         if (player.id === gridMessage.tiles[x][y]) {
             // console.log(player.color);
         }
@@ -111,9 +123,7 @@ function drawPlayer() {
     //
     //     }
     // }
-    for (player of playerMessage) {
-        id_to_color[player.id] = player.color;
-    }
+
 
     // for (let i = 0; i < tiles; i++) {
     //     for (let j = 0; j < tiles; j++) {
@@ -129,6 +139,12 @@ function drawPlayer() {
     // }
 }
 
+function Farben(message) {
+    message.forEach(player => {
+        spielerFarben[playerId] = player.color;
+    })
+}
+
 function playerInformation(){
     document.getElementById('tf1').innerText = '';
     document.getElementById('tf2').innerText = '';
@@ -138,6 +154,9 @@ function playerInformation(){
         document.getElementById('tf1').innerText += player.name + '\n';
         document.getElementById('tf2').innerText += player.frags + '\n';
         document.getElementById('tf3').innerText += player.owned + '\n';
+
+        // map player id to color every 5 seconds (on player topic)
+        id_to_color[player.id] = player.color;
     }
 
     // document.getElementById('feld2').innerHTML = tickerMessage;

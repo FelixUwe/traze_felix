@@ -3,6 +3,7 @@
     background-color: black;
     color: #44cef3;
     font-style: oblique;
+    margin-top: 5px;
 }
 
 h2 {
@@ -92,4 +93,9 @@ h2 {
 
 .Spieler{
     background: hotpink;
+}
+
+.eingabeFeld {
+    margin-top: 5px;
+    margin-left: 5px;
 }
