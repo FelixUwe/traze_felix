@@ -69,10 +69,14 @@ h2 {
 
 #Spielfeld > div {
     display: flex;
+    border-width: 1px;
+    border-color: #44cef3;
 }
 
 #Spielfeld > div > span{
-    background: #44cef3;
+    background: white;
+    border-color: #44cef3;
+    border-width: 1px;
     width: 8px;
     height: 8px;
     margin: 1px;
