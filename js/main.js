@@ -112,7 +112,6 @@ function drawPlayer() {
     //     }
     // }
     for (player of playerMessage) {
-        document.getElementById('feld1').innerText += player.name + '\n';
         id_to_color[player.id] = player.color;
     }
 
@@ -141,8 +140,8 @@ function playerInformation(){
         document.getElementById('tf3').innerText += player.owned + '\n';
     }
 
-    document.getElementById('feld2').innerHTML = tickerMessage;
-    document.getElementById('feld3').innerHTML = gridMessage;
+    // document.getElementById('feld2').innerHTML = tickerMessage;
+    // document.getElementById('feld3').innerHTML = gridMessage;
 
     //console.log(playerMessage);
     // document.getElementById('feld1').innerHTML = playerInformation;
