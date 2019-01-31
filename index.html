@@ -12,8 +12,9 @@
     <meta charset="UTF-8">
     <title>Traze</title>
 </head>
-<body class="background">
+<body class="background" onload="showGrid()">
 
+<input id="playerNameInput" type="text" placeholder="Spielername" />
 
 <button onclick="joinGame()" class="message-button">Join Game</button>
 <button onclick="test()" class="message-button">test</button>
@@ -43,7 +44,17 @@
 
     <div class="gridinfo"> <h3 class="heading3"> Grid information: </h3>
         <div class="feld3" id="feld3"></div> </div>
-
 </div>
+<div class="Steuerknöpfe">
+    <button class="message-button2" onclick="obenSteuern()">↑Oben</button>
+    <br>
+    <button class="message-button" onclick="linksSteuern()">←Links</button>
+    <button class="message-button" onclick="rechtsSteuern()">Rechts→</button>
+    <br>
+    <button onclick="untenSteuern()" class="message-button2">↓Unten</button>
+</div>
+
+<div id="Spielfeld"></div>
+
 </body>
 </html>
