@@ -92,7 +92,7 @@ function drawPlayer() {
         // console.log(gridMessage.bikes[0].trail);
 
         if (player.id === gridMessage.tiles[x][y]) {
-            console.log(player.color);
+            // console.log(player.color);
         }
         // for (feld of spielfelder) {
         //     if (id_to_position[player].currentlocation == feld.attributes.fieldId) {
