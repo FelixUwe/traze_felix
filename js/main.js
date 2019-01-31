@@ -101,6 +101,8 @@ function drawPlayer(gridMessage) {
                 console.log("cell " + x + "-" + y + " not found");
             }
         }
+        //wenn currentLocation != auf dem Spielfeld Spieler nicht anzeigen o. wenn id = 0 zeige farbe schwarz an
+        
     }
 }
 
