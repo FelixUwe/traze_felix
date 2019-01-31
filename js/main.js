@@ -8,7 +8,6 @@ const topics = [
     'traze/1/grid',
     'traze/1/join',
     'traze/1/player/' + clientId
-    // hinter player/ war die ID
 ];
 
 
