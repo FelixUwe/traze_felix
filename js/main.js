@@ -4,31 +4,14 @@ const GRID_SIZE = 61;
 const CLIENT_ID = pickNewID();
 const CLIENT = mqtt.connect(URL, {clientId: CLIENT_ID});
 
-const TOPICS = [
-    'traze/1/players',
-    'traze/1/grid',
-    'traze/1/join',
-    'traze/1/player/' + CLIENT_ID,
-    'traze/1/ticker'
-];
-
 const TOPIC_TO_FUNCTION = {
     'traze/1/players': onPlayers,
     'traze/1/grid': onGrid,
     'traze/1/join': onJoin,
-    ['traze/1/player/' + CLIENT_ID]: onMyPlayer,
-    'traze/1/ticker': onTicker
+    ['traze/1/player/' + CLIENT_ID]: onMyPlayer
 };
 
-let playerId = '';
-
-let playerMessage = '';
-let tickerMessage = '';
-let gridMessage = {};
-
-let secretToken = '';
-let steerTopic = '';
-let bailTopic = '';
+let playerId, secretToken, steerTopic, bailTopic;
 
 let id_to_color = {0: 'BLACK'};
 
@@ -42,18 +25,15 @@ CLIENT.on('connect', function () {
     });
 });
 
-function onPlayers() {
-    playerMessage = JSON.parse(message);
-    spielerAnzahl = playerMessage.length;
+function onPlayers(message) {
+    spielerAnzahl = message.length;
     for (let i = 0; i < spielerAnzahl; i++) {
         playerCount = i;
     }
     playerInformation();
-    message = JSON.parse(message);
 }
 
 function onMyPlayer(message) {
-    message = JSON.parse(message);
     secretToken = message.secretUserToken;
     playerId = message.id;
     steerTopic = 'traze/1/' + playerId + '/steer';
@@ -62,28 +42,15 @@ function onMyPlayer(message) {
     return message;
 }
 
-CLIENT.on('message', function (topic, message) {
+function onGrid(message) {
+    drawPlayer(message);
+    paintSpawnPoint(message);
+}
 
+CLIENT.on('message', function (topic, message) {
+    message = JSON.parse(message);
     TOPIC_TO_FUNCTION[topic](message);
     // TODO ergänzen für die anderen beiden Topics
-
-    if (topic === TOPICS[3]) {
-        message = onMyPlayer(message);
-    }
-
-    if (topic === TOPICS[0]) {
-        onPlayers();
-    }
-    if (topic === TOPICS[1]) {
-        gridMessage = JSON.parse(message);
-        drawPlayer(gridMessage);
-        paintSpawnPoint(gridMessage);
-    }
-    if (topic === TOPICS[4]) {
-        tickerMessage = JSON.parse(message);
-    }
-
-
 });
 
 function drawPlayer(gridMessage) {
