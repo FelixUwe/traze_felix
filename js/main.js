@@ -23,7 +23,11 @@ let secretToken = '';
 let steerTopic = '';
 let bailTopic = '';
 
-let id_to_color = {};
+let id_to_color = {0: 'BLACK'};
+
+// let topics = { KEY : VALUE};
+// topics
+
 let id_to_position = {};
 
 let spielerFarben = {};
@@ -64,7 +68,6 @@ client.on('message', function (topic, message) {
     }
     if (topic === topics[4]) {
         tickerMessage = JSON.parse(message);
-        onTickerMessage(tickerMessage);
     }
 
 
@@ -75,6 +78,7 @@ function drawPlayer(gridMessage) {
         for (let y = 0; y < gridMessage.tiles.length; y++) {
             let playerId = gridMessage.tiles[x][y];
             let cell = document.getElementById(x+"-"+y);
+
             if (cell.classList.contains("blink")) {
                 cell.classList.remove("blink");
             }
@@ -90,19 +94,6 @@ function drawPlayer(gridMessage) {
     }
 }
 
-function onTickerMessage(tickerMessage) {
-    let deadId = tickerMessage.casualty;
-    let deadTrail;
-    for (let i = 0; i < gridMessage.bikes.length; i++) {
-        if (deadId = gridMessage.bikes[i].playerId) {
-            deadTrail = gridMessage.bikes[i].trail;
-            deadTrail.push(gridMessage.bikes[i].currentLocation);
-            paintTrailWhenKilled(deadTrail);
-        }
-    }
-
-}
-
 function paintTrailWhenKilled(deadTrail) {
     for (let i = 0; i < deadTrail.length; i++) {
         let cell = document.getElementById(deadTrail[i][0] + "-" + deadTrail[i][1]);
@@ -115,7 +106,6 @@ function paintSpawnPoint(gridMessage) {
     for (let i = 0;i < gridMessage.spawns.length; i++) {
         let cell = document.getElementById(spawnPoints[i][0] + "-" + spawnPoints[i][1]);
         cell.classList.add("blink");
-        // cell.style.background = "black";
     }
 }
 
@@ -193,21 +183,35 @@ function steuerInput() {
     });
 }
 
+// function selbstmordBot() {
+//    let selbstmordBotName = SelbstmordBot;
+//
+//    let clientId = pickNewID();
+//
+//    let joinMsg = {
+//         name: playerName,
+//         mqttClientName: clientId
+//     };
+//
+//    rechtsSteuern();
+//
+// }
+
 function rechtsSteuern() {
     steuern('E');
-};
+}
 
 function obenSteuern() {
     steuern('N');
-};
+}
 
 function linksSteuern() {
     steuern('W');
-};
+}
 
 function untenSteuern() {
     steuern('S');
-};
+}
 
 
 function leave() {
@@ -223,7 +227,7 @@ function pickNewID() {
     let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         let r = (d + Math.random()*16)%16 | 0;
         d = Math.floor(d/16);
-        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        return (c==='x' ? r : (r&0x3|0x8)).toString(16);
     });
     return uuid;
 
