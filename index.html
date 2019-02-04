@@ -11,19 +11,19 @@
 <body class="background" onload="showGrid()">
 <div>
     <input class="eingabeFeld" id="playerNameInput" placeholder="Spielername" type="text" />
-    <button onclick="joinGame()" class="message-button">Join Game</button>
-    <button onclick="test()" class="message-button">test</button>
-    <button onclick="leave()" class="message-button">leave</button>
-    <button onclick="selbstmordBot()" class="message-button">Selbstmordbot</button>
+    <button onclick="joinGame()" class="traze-button">Join Game</button>
+    <button onclick="test()" class="traze-button">test</button>
+    <button onclick="leave()" class="traze-button">leave</button>
+    <button onclick="selbstmordBot()" class="traze-button">Selbstmordbot</button>
     <h3 class="h3">Traze</h3>
 </div>
 <div class="Steuerknöpfe">
-    <button class="message-button2" onclick="obenSteuern()">↑Oben</button>
+    <button class="traze-button extra-margin" onclick="steuern('N')">↑Oben</button>
     <br>
-    <button class="message-button" onclick="linksSteuern()">←Links</button>
-    <button class="message-button" onclick="rechtsSteuern()">Rechts→</button>
+    <button class="traze-button" onclick="steuern('W')">←Links</button>
+    <button class="traze-button" onclick="steuern('E')">Rechts→</button>
     <br>
-    <button onclick="untenSteuern()" class="message-button2">↓Unten</button>
+    <button class="traze-button extra-margin" onclick="steuern('S')">↓Unten</button>
 </div>
 <div id="Spielfeld">
     <div class="container">

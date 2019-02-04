@@ -1,9 +1,13 @@
-.message-button {
+.traze-button {
     font-size: larger;
     background-color: black;
     color: #44cef3;
     font-style: oblique;
     margin-top: 5px;
+}
+
+.extra-margin{
+    margin-left: 35px;
 }
 
 h2 {
@@ -67,13 +71,7 @@ h2 {
     color: #44cef3;
 }
 
-.message-button2{
-    font-size: larger;
-    background-color: black;
-    color: #44cef3;
-    font-style: oblique;
-    margin-left: 35px;
-}
+
 
 #Spielfeld > div {
     display: flex;

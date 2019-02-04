@@ -1,19 +1,26 @@
-const url = 'wss://traze.iteratec.de:9443';
-const tiles = -1;
-const clientId = pickNewID();
-let playerId = '';
+const URL = 'wss://traze.iteratec.de:9443';
+const TILES = -1;
+const GRID_SIZE = 61;
+const CLIENT_ID = pickNewID();
+const CLIENT = mqtt.connect(URL, {clientId: CLIENT_ID});
 
-const topics = [
+const TOPICS = [
     'traze/1/players',
     'traze/1/grid',
     'traze/1/join',
-    'traze/1/player/' + clientId,
+    'traze/1/player/' + CLIENT_ID,
     'traze/1/ticker'
 ];
 
+const TOPIC_TO_FUNCTION = {
+    'traze/1/players': onPlayers,
+    'traze/1/grid': onGrid,
+    'traze/1/join': onJoin,
+    ['traze/1/player/' + CLIENT_ID]: onMyPlayer,
+    'traze/1/ticker': onTicker
+};
 
-let client = mqtt.connect(url, {clientId: clientId});
-let testMessage = '';
+let playerId = '';
 
 let playerMessage = '';
 let tickerMessage = '';
@@ -25,48 +32,54 @@ let bailTopic = '';
 
 let id_to_color = {0: 'BLACK'};
 
-// let topics = { KEY : VALUE};
-// topics
-
-let id_to_position = {};
-
-let spielerFarben = {};
 let playerCount = '';
 
-client.on('connect', function () {
-    client.subscribe(topics, function (err) {
+CLIENT.on('connect', function () {
+    CLIENT.subscribe(TOPICS, function (err) {
         if (err) {
             console.log(err);
         }
     });
 });
 
-client.on('message', function (topic, message) {
-    if (topic === topics[3]) {
-        message = JSON.parse(message);
-        secretToken = message.secretUserToken;
-        playerId = message.id;
-        steerTopic = 'traze/1/' + playerId + '/steer';
-        bailTopic = 'traze/1/' + playerId + '/bail';
-        playerInformation();
+function onPlayers() {
+    playerMessage = JSON.parse(message);
+    spielerAnzahl = playerMessage.length;
+    for (let i = 0; i < spielerAnzahl; i++) {
+        playerCount = i;
+    }
+    playerInformation();
+    message = JSON.parse(message);
+}
+
+function onMyPlayer(message) {
+    message = JSON.parse(message);
+    secretToken = message.secretUserToken;
+    playerId = message.id;
+    steerTopic = 'traze/1/' + playerId + '/steer';
+    bailTopic = 'traze/1/' + playerId + '/bail';
+    playerInformation();
+    return message;
+}
+
+CLIENT.on('message', function (topic, message) {
+
+    TOPIC_TO_FUNCTION[topic](message);
+    // TODO ergänzen für die anderen beiden Topics
+
+    if (topic === TOPICS[3]) {
+        message = onMyPlayer(message);
     }
 
-    if (topic === topics[0]) {
-        playerMessage = JSON.parse(message);
-        spielerAnzahl = playerMessage.length;
-        for (let i = 0; i < spielerAnzahl; i++) {
-            playerCount = i;
-            // console.log(playerCount);
-        }
-        playerInformation();
-        message = JSON.parse(message);
+    if (topic === TOPICS[0]) {
+        onPlayers();
     }
-    if (topic === topics[1]) {
+    if (topic === TOPICS[1]) {
         gridMessage = JSON.parse(message);
         drawPlayer(gridMessage);
         paintSpawnPoint(gridMessage);
     }
-    if (topic === topics[4]) {
+    if (topic === TOPICS[4]) {
         tickerMessage = JSON.parse(message);
     }
 
@@ -77,45 +90,32 @@ function drawPlayer(gridMessage) {
     for (let x = 0; x < gridMessage.tiles.length; x++) {
         for (let y = 0; y < gridMessage.tiles.length; y++) {
             let playerId = gridMessage.tiles[x][y];
-            let cell = document.getElementById(x+"-"+y);
+            let cell = document.getElementById(x + "-" + y);
 
             if (cell.classList.contains("blink")) {
                 cell.classList.remove("blink");
             }
-            if(cell) {
+            if (cell) {
                 cell.style.background = id_to_color[playerId];
             }
             else {
-                console.log("cell " + x + "-" + y + " not found");
+                console.error("cell " + x + "-" + y + " not found");
             }
 
         }
-        
-    }
-}
 
-function paintTrailWhenKilled(deadTrail) {
-    for (let i = 0; i < deadTrail.length; i++) {
-        let cell = document.getElementById(deadTrail[i][0] + "-" + deadTrail[i][1]);
-        cell.style.background = "white";
     }
 }
 
 function paintSpawnPoint(gridMessage) {
     let spawnPoints = gridMessage.spawns;
-    for (let i = 0;i < gridMessage.spawns.length; i++) {
+    for (let i = 0; i < gridMessage.spawns.length; i++) {
         let cell = document.getElementById(spawnPoints[i][0] + "-" + spawnPoints[i][1]);
         cell.classList.add("blink");
     }
 }
 
-function Farben(message) {
-    message.forEach(player => {
-        spielerFarben[playerId] = player.color;
-    })
-}
-
-function playerInformation(){
+function playerInformation() {
     document.getElementById('tf1').innerText = '';
     document.getElementById('tf2').innerText = '';
 
@@ -125,8 +125,6 @@ function playerInformation(){
 
         id_to_color[player.id] = player.color;
     }
-
-
 }
 
 
@@ -135,42 +133,38 @@ function joinGame() {
 
     let joinMsg = {
         name: playerName,
-        mqttClientName: clientId
+        mqttClientName: CLIENT_ID
     };
 
     steuerInput();
 
-    client.publish(topics[2], JSON.stringify(joinMsg));
-    //
+    CLIENT.publish(TOPICS[2], JSON.stringify(joinMsg));
 }
 
 function test() {
-    console.log(topics);
+    console.log(TOPICS);
     playerInformation();
     console.log(playerId);
     console.log(playerMessage);
     console.log(gridMessage);
-    console.log(cell);
-    console.log(logCell);
 
 }
 
 function steuern(richtung) {
-    let steuernMessage = {course: richtung, playerToken: secretToken };
-    // console.log(steerTopic, JSON.stringify(steuernMessage));
-    client.publish(steerTopic, JSON.stringify(steuernMessage));
+    let steuernMessage = {course: richtung, playerToken: secretToken};
+    CLIENT.publish(steerTopic, JSON.stringify(steuernMessage));
 }
 
 function steuerInput() {
     document.addEventListener('keydown', event => {
         event = event || window.event;
         // W
-       if (event.keyCode == '87'){
+        if (event.keyCode == '87') {
             steuern('N');
-       }
-       // A
-       else if (event.keyCode == '65'){
-           steuern('W');
+        }
+        // A
+        else if (event.keyCode == '65') {
+            steuern('W');
         }
         // S
         else if (event.keyCode == '83') {
@@ -197,37 +191,20 @@ function steuerInput() {
 //
 // }
 
-function rechtsSteuern() {
-    steuern('E');
-}
-
-function obenSteuern() {
-    steuern('N');
-}
-
-function linksSteuern() {
-    steuern('W');
-}
-
-function untenSteuern() {
-    steuern('S');
-}
-
-
 function leave() {
-    let bailMessage = {playerToken : secretToken};
-    client.publish(bailTopic, JSON.stringify(bailMessage));
+    let bailMessage = {playerToken: secretToken};
+    CLIENT.publish(bailTopic, JSON.stringify(bailMessage));
 }
 
 function pickNewID() {
     let d = new Date().getTime();
-    if(Date.now){
+    if (Date.now) {
         d = Date.now();
     }
-    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        let r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c==='x' ? r : (r&0x3|0x8)).toString(16);
+    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
 
@@ -237,9 +214,9 @@ function showGrid() {
 
     let spielfeld = document.getElementById("Spielfeld");
     let div = document.getElementsByTagName("span");
-    for (let j = 61; j > tiles; j--) {
+    for (let j = GRID_SIZE; j > TILES; j--) {
         let row = document.createElement("div");
-        for (let i = 61; i > tiles; i--) {
+        for (let i = GRID_SIZE; i > TILES; i--) {
             let cell = document.createElement("span");
             cell.id = "" + i + "-" + j;
             row.appendChild(cell);
