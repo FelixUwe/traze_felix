@@ -145,19 +145,22 @@ function steuerInput() {
     });
 }
 
-// function selbstmordBot() {
-//    let selbstmordBotName = SelbstmordBot;
-//
-//    let clientId = pickNewID();
-//
-//    let joinMsg = {
-//         name: playerName,
-//         mqttClientName: clientId
-//     };
-//
-//    rechtsSteuern();
-//
-// }
+function selbstmordBot() {
+   let selbstmordBotName = "SelbstmordBot";
+
+   let clientId = pickNewID();
+
+   let joinMsg = {
+        name: selbstmordBotName,
+        mqttClientName: CLIENT_ID
+    };
+
+    steuern('E');
+
+   CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
+
+    console.log(secretToken);
+}
 
 function leave() {
     let bailMessage = {playerToken: secretToken};
