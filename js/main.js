@@ -50,7 +50,7 @@ function onGrid(message) {
 CLIENT.on('message', function (topic, message) {
     message = JSON.parse(message);
     TOPIC_TO_FUNCTION[topic](message);
-    // TODO ergänzen für die anderen beiden Topics
+    // TODO onJoin
 });
 
 function drawPlayer(gridMessage) {
