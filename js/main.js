@@ -9,14 +9,13 @@ const JOIN_TOPIC = "traze/1/join";
 const TOPIC_TO_FUNCTION = {
     'traze/1/players': onPlayers,
     'traze/1/grid': onGrid,
-    ['traze/1/player/' + CLIENT_ID]: onMyPlayer
+    ['traze/1/player/' + CLIENT_ID]: onMyPlayer,
+    'traze/1/ticker': onTicker
 };
 
-let playerId, secretToken, steerTopic, bailTopic;
+let playerId, secretToken, steerTopic, bailTopic, playerCount, deadId;
 
 let id_to_color = {0: 'BLACK'};
-
-let playerCount = '';
 
 CLIENT.on('connect', function () {
     let topics = Object.keys(TOPIC_TO_FUNCTION);
@@ -47,6 +46,11 @@ function onMyPlayer(message) {
 function onGrid(message) {
     drawPlayer(message);
     paintSpawnPoint(message);
+}
+
+function onTicker(message) {
+    deadId = message.casualty;
+    toderkennen();
 }
 
 CLIENT.on('message', function (topic, message) {
@@ -104,62 +108,66 @@ function joinGame() {
         mqttClientName: CLIENT_ID
     };
 
-    steuerInput();
-
     CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
+
+    registerKeyboardInputs();
+}
+
+function toderkennen() {
+    if (deadId == playerId) {
+        document.removeEventListener('keydown', eventListener);
+    }
+
 }
 
 function test() {
-    console.log(TOPIC_TO_FUNCTION);
-    // playerInformation();
-    console.log(playerId);
-    console.log(playerMessage);
-    console.log(gridMessage);
+    console.log("TOPIC_TO_FUNCTION",TOPIC_TO_FUNCTION);
+    console.log("playerId",playerId);
 
 }
-
 function steuern(richtung) {
     let steuernMessage = {course: richtung, playerToken: secretToken};
     CLIENT.publish(steerTopic, JSON.stringify(steuernMessage));
+
+}
+function registerKeyboardInputs() {
+    document.addEventListener('keydown', eventListener);
 }
 
-function steuerInput() {
-    document.addEventListener('keydown', event => {
-        event = event || window.event;
-        // W
-        if (event.keyCode == '87') {
-            steuern('N');
-        }
-        // A
-        else if (event.keyCode == '65') {
-            steuern('W');
-        }
-        // S
-        else if (event.keyCode == '83') {
-            steuern('S');
-        }
-        // D
-        else if (event.keyCode == '68') {
-            steuern('E');
-        }
-    });
+function eventListener(event) {
+
+    if (event.keyCode == '87') {
+        steuern('N');
+    }
+    // A
+    else if (event.keyCode == '65') {
+        steuern('W');
+    }
+    // S
+    else if (event.keyCode == '83') {
+        steuern('S');
+    }
+    // D
+    else if (event.keyCode == '68') {
+        steuern('E');
+    }
 }
 
 function selbstmordBot() {
-   let selbstmordBotName = "SelbstmordBot";
+    let selbstmordBotName = "SelbstmordBot";
 
    let clientId = pickNewID();
 
-   let joinMsg = {
+    let joinMsg = {
         name: selbstmordBotName,
         mqttClientName: CLIENT_ID
     };
 
-    steuern('E');
+    CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
 
-   CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
-
-    console.log(secretToken);
+    setTimeout(function() {
+        steuern('E');
+    }, 1000);
 }
 
 function leave() {
@@ -178,11 +186,9 @@ function pickNewID() {
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
-
 }
 
 function showGrid() {
-
     let spielfeld = document.getElementById("Spielfeld");
     let div = document.getElementsByTagName("span");
     for (let j = GRID_SIZE; j > TILES; j--) {
