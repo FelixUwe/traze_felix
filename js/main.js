@@ -4,10 +4,11 @@ const GRID_SIZE = 61;
 const CLIENT_ID = pickNewID();
 const CLIENT = mqtt.connect(URL, {clientId: CLIENT_ID});
 
+const JOIN_TOPIC = "traze/1/join";
+
 const TOPIC_TO_FUNCTION = {
     'traze/1/players': onPlayers,
     'traze/1/grid': onGrid,
-    'traze/1/join': onJoin,
     ['traze/1/player/' + CLIENT_ID]: onMyPlayer
 };
 
@@ -18,7 +19,8 @@ let id_to_color = {0: 'BLACK'};
 let playerCount = '';
 
 CLIENT.on('connect', function () {
-    CLIENT.subscribe(TOPICS, function (err) {
+    let topics = Object.keys(TOPIC_TO_FUNCTION);
+    CLIENT.subscribe(topics, function (err) {
         if (err) {
             console.log(err);
         }
@@ -30,7 +32,7 @@ function onPlayers(message) {
     for (let i = 0; i < spielerAnzahl; i++) {
         playerCount = i;
     }
-    playerInformation();
+    playerInformation(message);
 }
 
 function onMyPlayer(message) {
@@ -38,7 +40,7 @@ function onMyPlayer(message) {
     playerId = message.id;
     steerTopic = 'traze/1/' + playerId + '/steer';
     bailTopic = 'traze/1/' + playerId + '/bail';
-    playerInformation();
+    // playerInformation(message);
     return message;
 }
 
@@ -50,7 +52,6 @@ function onGrid(message) {
 CLIENT.on('message', function (topic, message) {
     message = JSON.parse(message);
     TOPIC_TO_FUNCTION[topic](message);
-    // TODO onJoin
 });
 
 function drawPlayer(gridMessage) {
@@ -82,11 +83,11 @@ function paintSpawnPoint(gridMessage) {
     }
 }
 
-function playerInformation() {
+function playerInformation(message) {
     document.getElementById('tf1').innerText = '';
     document.getElementById('tf2').innerText = '';
 
-    for (player of playerMessage) {
+    for (player of message) {
         document.getElementById('tf1').innerText += player.name + '\n';
         document.getElementById('tf2').innerText += player.frags + '\n';
 
@@ -105,12 +106,12 @@ function joinGame() {
 
     steuerInput();
 
-    CLIENT.publish(TOPICS[2], JSON.stringify(joinMsg));
+    CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
 }
 
 function test() {
-    console.log(TOPICS);
-    playerInformation();
+    console.log(TOPIC_TO_FUNCTION);
+    // playerInformation();
     console.log(playerId);
     console.log(playerMessage);
     console.log(gridMessage);
