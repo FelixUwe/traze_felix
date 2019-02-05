@@ -57,9 +57,7 @@ function onGrid(message) {
     paintSpawnPoint(message);
 
     if (botMode) {
-        console.log("Grid: Bot mode!");
         if (aktuellerBotBike === '') {
-            console.log("Grid: no bike found!");
             setBotBike(message)
         } else {
             botSteuernRechtsWennRechtsFrei(message);
@@ -212,10 +210,7 @@ function selbstmordBot() {
 
 }
 
-function bot() {
-
-    let botName = "Superbot";
-
+function disableSteerButtons() {
     let steerButtonList = document.getElementsByClassName("steer-button");
 
     for (let index = 0; index < steerButtonList.length; index++) {
@@ -223,19 +218,22 @@ function bot() {
         steerButton.classList.add("deaktiviert");
         steerButton.setAttribute("disabled", "disabled");
     }
+}
+
+function bot() {
+    let botName = "Superbot";
+    disableSteerButtons();
 
     let joinMsg = {
         name: botName,
         mqttClientName: CLIENT_ID
     };
 
-    console.log("Bot wants to join...");
     CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
 
     setTimeout(function () {
         botMode = true;
-        console.log("activate bot mode!");
-        steuern('W');
+        steuern('N');
     }, 1000);
 }
 
@@ -249,36 +247,47 @@ function setBotBike(message) {
 }
 
 function botSteuernRechtsWennRechtsFrei(message) {
-    let naechstePositionRechts = "" + aktuellerBotBike.currentLocation[0] + 1 + "-" + aktuellerBotBike.currentLocation[1];
-    if (naechstePositionRechts === document.getElementById(naechstePositionRechts) && document.getElementById(naechstePositionRechts).style.background === "black") {
+    let newX = aktuellerBotBike.currentLocation[0] + 1;
+    let naechstePositionRechts = "" + newX + "-" + aktuellerBotBike.currentLocation[1];
+    if (naechstePositionRechts === document.getElementById(naechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
+        console.log("RECHTS FREI");
         steuern('E');
     } else {
-        botSteuernLinksWennLinksFrei(message);
-    }
-}
-
-function botSteuernLinksWennLinksFrei(message) {
-    let naechstePositionLinks = "" + aktuellerBotBike.currentLocation[0] - 1 + "" +aktuellerBotBike.currentLocation[1];
-
-    if (naechstePositionLinks === document.getElementById(naechstePositionLinks) && document.getElementById(naechstePositionLinks).style.background === "black") {
-        steuern('W');
-    } else {
+        console.log("RECHTS nicht FREI");
         botSteuernUntenWennUntenFrei(message);
     }
 }
 
-function botSteuernUntenWennUntenFrei(message) {
-    let naechstePositionUnten = "" + aktuellerBotBike.currentLocation + "-" + aktuellerBotBike.currentLocation[1] - 1;
-    if (naechstePositionUnten === document.getElementById(naechstePositionUnten) && document.getElementById(naechstePositionUnten).style.background === "black") {
-        steuern('S');
+function botSteuernLinksWennLinksFrei(message) {
+    let newNegativX =  aktuellerBotBike.currentLocation[0] - 1;
+    let naechstePositionLinks = "" + newNegativX + "" + aktuellerBotBike.currentLocation[1];
+
+    if (naechstePositionLinks === document.getElementById(naechstePositionLinks).id && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
+        console.log("Links FREI");
+        steuern('W');
     } else {
+        console.log("Links NICHT FREI");
         botSteuernObenWennObenFrei(message);
     }
 }
 
+function botSteuernUntenWennUntenFrei(message) {
+    let newNegativY = aktuellerBotBike.currentLocation[1] - 1;
+    let naechstePositionUnten = "" + aktuellerBotBike.currentLocation + "-" + newNegativY;
+    if (naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
+        "UNTEN FREI"
+        steuern('S');
+    } else {
+        "UNTEN NICHT FREI"
+        botSteuernLinksWennLinksFrei(message);
+    }
+}
+
 function botSteuernObenWennObenFrei(message) {
-    let naechstePositionOben = "" + aktuellerBotBike.currentLocation + "-" + aktuellerBotBike.currentLocation[1] + 1;
-    if (naechstePositionOben === document.getElementById(naechstePositionOben) && document.getElementById(naechstePositionOben).style.background === "black") {
+    let newY = aktuellerBotBike.currentLocation[1] + 1;
+    let naechstePositionOben = "" + aktuellerBotBike.currentLocation + "-" + newY;
+    if (naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%") {
+        "OBEN FREI"
         steuern('N');
     }
 
