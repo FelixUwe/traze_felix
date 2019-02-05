@@ -248,8 +248,10 @@ function setBotBike(message) {
 
 function botSteuernRechtsWennRechtsFrei(message) {
     let newX = aktuellerBotBike.currentLocation[0] + 1;
+    let secondNewX = aktuellerBotBike.currentLocation[0] + 2;
     let naechstePositionRechts = "" + newX + "-" + aktuellerBotBike.currentLocation[1];
-    if (naechstePositionRechts === document.getElementById(naechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
+    let uebernaechstePositionRechts = "" + secondNewX + "-" + aktuellerBotBike.currentLocation[1];
+    if (naechstePositionRechts === document.getElementById(naechstePositionRechts).id && uebernaechstePositionRechts === document.getElementById(uebernaechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
         console.log("RECHTS FREI");
         steuern('E');
     } else {
@@ -260,9 +262,10 @@ function botSteuernRechtsWennRechtsFrei(message) {
 
 function botSteuernLinksWennLinksFrei(message) {
     let newNegativX =  aktuellerBotBike.currentLocation[0] - 1;
+    let secondNewNegativX =  aktuellerBotBike.currentLocation[0] - 2;
     let naechstePositionLinks = "" + newNegativX + "" + aktuellerBotBike.currentLocation[1];
-
-    if (naechstePositionLinks === document.getElementById(naechstePositionLinks).id && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
+    let ueberNaechstePositionLinks = "" + secondNewNegativX + "" + aktuellerBotBike.currentLocation[1];
+    if (naechstePositionLinks === document.getElementById(naechstePositionLinks).id && ueberNaechstePositionLinks === document.getElementById(ueberNaechstePositionLinks).id && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
         console.log("Links FREI");
         steuern('W');
     } else {
@@ -273,8 +276,10 @@ function botSteuernLinksWennLinksFrei(message) {
 
 function botSteuernUntenWennUntenFrei(message) {
     let newNegativY = aktuellerBotBike.currentLocation[1] - 1;
-    let naechstePositionUnten = "" + aktuellerBotBike.currentLocation + "-" + newNegativY;
-    if (naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
+    let secondNewNegativY = aktuellerBotBike.currentLocation[1] -2;
+    let naechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + newNegativY;
+    let ueberNaechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewNegativY;
+    if (naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionUnten === document.getElementById(ueberNaechstePositionUnten).id && document.getElementById(ueberNaechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
         "UNTEN FREI"
         steuern('S');
     } else {
@@ -285,8 +290,10 @@ function botSteuernUntenWennUntenFrei(message) {
 
 function botSteuernObenWennObenFrei(message) {
     let newY = aktuellerBotBike.currentLocation[1] + 1;
-    let naechstePositionOben = "" + aktuellerBotBike.currentLocation + "-" + newY;
-    if (naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%") {
+    let secondNewY = aktuellerBotBike.currentLocation[1] +2;
+    let naechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + newY;
+    let ueberNaechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewY;
+    if (naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionOben === document.getElementById(ueberNaechstePositionOben).id && document.getElementById(ueberNaechstePositionOben).style.background === "black none repeat scroll 0& 0%") {
         "OBEN FREI"
         steuern('N');
     }
