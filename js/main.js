@@ -13,7 +13,7 @@ const TOPIC_TO_FUNCTION = {
     'traze/1/ticker': onTicker
 };
 
-let playerId, secretToken, steerTopic, bailTopic, playerCount, deadId;
+let playerId, secretToken, steerTopic, bailTopic, playerCount, deadId, newX,secondNewX,newNegativX, secondNewNegativX,newY,secondNewY, newNegativY, secondNewNegativY, naechstePositionRechts, ueberNaechstePositionRechts, naechstePositionLinks, ueberNaechstePositionLinks, naechstePositionUnten, ueberNaechstePositionUnten, naechstePositionOben,ueberNaechstePositionOben;
 
 let id_to_color = {0: 'BLACK'};
 
@@ -55,14 +55,16 @@ function onMyPlayer(message) {
 function onGrid(message) {
     drawPlayer(message);
     paintSpawnPoint(message);
-
     if (botMode) {
         if (aktuellerBotBike === '') {
             setBotBike(message)
-        } else {
+        } else { if (newX !== '' && secondNewX !== '' && newNegativX !== '' && secondNewNegativX !== '' && newY !== '' && secondNewY !== '' && newNegativY !== '' && naechstePositionRechts !== '' &&  ueberNaechstePositionRechts!== '' &&  naechstePositionLinks !== '' && ueberNaechstePositionLinks !== '' &&  naechstePositionUnten !== '' && ueberNaechstePositionUnten !== '' && naechstePositionOben !== '' && ueberNaechstePositionOben !== '') {
             botSteuernRechtsWennRechtsFrei(message);
-        }
+        } else {
+            botVariablenneuSetzen(message);
+        }}
     }
+
 }
 
 function onTicker(message) {
@@ -243,21 +245,35 @@ function setBotBike(message) {
     console.log("aktuellerBotBike", aktuellerBotBike);
 }
 
+function botVariablenneuSetzen(message) {
+    newX = aktuellerBotBike.currentLocation[0] + 1;
+    secondNewX = aktuellerBotBike.currentLocation[0] + 2;
+    naechstePositionRechts = "" + newX + "-" + aktuellerBotBike.currentLocation[1];
+    ueberNaechstePositionRechts = "" + secondNewX + "-" + aktuellerBotBike.currentLocation[1];
+    newNegativX =  aktuellerBotBike.currentLocation[0] - 1;
+    secondNewNegativX =  aktuellerBotBike.currentLocation[0] - 2;
+    naechstePositionLinks = "" + newNegativX + "" + aktuellerBotBike.currentLocation[1];
+    ueberNaechstePositionLinks = "" + secondNewNegativX + "" + aktuellerBotBike.currentLocation[1];
+    newNegativY = aktuellerBotBike.currentLocation[1] - 1;
+    secondNewNegativY = aktuellerBotBike.currentLocation[1] -2;
+    naechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + newNegativY;
+    ueberNaechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewNegativY;
+    newY = aktuellerBotBike.currentLocation[1] + 1;
+    secondNewY = aktuellerBotBike.currentLocation[1] +2;
+    naechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + newY;
+    ueberNaechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewY;
+}
+
 function botSteuernRechtsWennRechtsFrei(message) {
-    let newX = aktuellerBotBike.currentLocation[0] + 1;
-    let secondNewX = aktuellerBotBike.currentLocation[0] + 2;
-    let naechstePositionRechts = "" + newX + "-" + aktuellerBotBike.currentLocation[1];
-    let uebernaechstePositionRechts = "" + secondNewX + "-" + aktuellerBotBike.currentLocation[1];
-    if (document.getElementById(naechstePositionRechts).id !== null && naechstePositionRechts === document.getElementById(naechstePositionRechts).id && uebernaechstePositionRechts === document.getElementById(uebernaechstePositionRechts).id
-        && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%"
-        && document.getElementById(uebernaechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
+    console.log("nächste Position Rechts", naechstePositionRechts);
+    console.log("übernächste Position rechts", ueberNaechstePositionRechts);
+    debugger
+    if (document.getElementById(naechstePositionRechts).id !== null && document.getElementById(ueberNaechstePositionRechts).id !== null && naechstePositionRechts === document.getElementById(naechstePositionRechts).id && uebernaechstePositionRechts === document.getElementById(uebernaechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
             console.log(document.getElementById(naechstePositionRechts).style.background);
-            console.log(document.getElementById(uebernaechstePositionRechts).style.background);
+            console.log(document.getElementById(ueberNaechstePositionRechts).style.background);
             console.log("RECHTS FREI");
             steuern('E');
-    } else { if (naechstePositionRechts !== document.getElementById(naechstePositionRechts).id || document.getElementById(naechstePositionRechts).style.background !== "black none repeat scroll 0% 0%"
-        || uebernaechstePositionRechts !== document.getElementById(uebernaechstePositionRechts).id || document.getElementById(uebernaechstePositionRechts).style.background !== "black none repeat scroll 0% 0%"
-        || document.getElementById(naechstePositionRechts).id === null || document.getElementById(uebernaechstePositionRechts).id ===null) {
+    } else { if (naechstePositionRechts !== document.getElementById(naechstePositionRechts).id || document.getElementById(naechstePositionRechts).style.background !== "black none repeat scroll 0% 0%" || uebernaechstePositionRechts !== document.getElementById(ueberNaechstePositionRechts).id || document.getElementById(ueberNaechstePositionRechts).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionRechts).id === null || document.getElementById(uebernaechstePositionRechts).id ===null) {
             console.log("RECHTS nicht FREI");
             botSteuernUntenWennUntenFrei(message);
         }
@@ -265,18 +281,10 @@ function botSteuernRechtsWennRechtsFrei(message) {
 }
 
 function botSteuernLinksWennLinksFrei(message) {
-    let newNegativX =  aktuellerBotBike.currentLocation[0] - 1;
-    let secondNewNegativX =  aktuellerBotBike.currentLocation[0] - 2;
-    let naechstePositionLinks = "" + newNegativX + "" + aktuellerBotBike.currentLocation[1];
-    let ueberNaechstePositionLinks = "" + secondNewNegativX + "" + aktuellerBotBike.currentLocation[1];
-    if (document.getElementById(naechstePositionLinks).id !== null && naechstePositionLinks === document.getElementById(naechstePositionLinks).id && ueberNaechstePositionLinks === document.getElementById(ueberNaechstePositionLinks).id
-        && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%"
-        && document.getElementById(ueberNaechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
-            console.log("Links FREI");
+    if (document.getElementById(naechstePositionLinks).id !== null && document.getElementById(ueberNaechstePositionLinks).id !== null && naechstePositionLinks === document.getElementById(naechstePositionLinks).id && ueberNaechstePositionLinks === document.getElementById(ueberNaechstePositionLinks).id && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
+        console.log("Links FREI");
             steuern('W');
-    } else {  if (naechstePositionLinks !== document.getElementById(naechstePositionLinks).id || document.getElementById(naechstePositionLinks).style.background !== "black none repeat scroll 0% 0%"
-        || ueberNaechstePositionLinks !== document.getElementById(ueberNaechstePositionLinks).id || document.getElementById(ueberNaechstePositionLinks).style.background !== "black none repeat scroll 0% 0%"
-        || document.getElementById(naechstePositionLinks).id === null || document.getElementById(ueberNaechstePositionLinks).id ===null) {
+    } else {  if (naechstePositionLinks !== document.getElementById(naechstePositionLinks).id || document.getElementById(naechstePositionLinks).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionLinks !== document.getElementById(ueberNaechstePositionLinks).id || document.getElementById(ueberNaechstePositionLinks).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionLinks).id === null || document.getElementById(ueberNaechstePositionLinks).id ===null) {
             console.log("Links NICHT FREI");
             botSteuernObenWennObenFrei(message);
         }
@@ -284,18 +292,10 @@ function botSteuernLinksWennLinksFrei(message) {
 }
 
 function botSteuernUntenWennUntenFrei(message) {
-    let newNegativY = aktuellerBotBike.currentLocation[1] - 1;
-    let secondNewNegativY = aktuellerBotBike.currentLocation[1] -2;
-    let naechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + newNegativY;
-    let ueberNaechstePositionUnten = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewNegativY;
-    if (naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%"
-        && ueberNaechstePositionUnten === document.getElementById(ueberNaechstePositionUnten).id
-        && document.getElementById(ueberNaechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
+    if (document.getElementById(naechstePositionUnten).id !== null && document.getElementById(ueberNaechstePositionUnten).id !== null && naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionUnten === document.getElementById(ueberNaechstePositionUnten).id && document.getElementById(ueberNaechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
         console.log("UNTEN FREI");
         steuern('S');
-    } else { if (naechstePositionUnten !== document.getElementById(naechstePositionUnten).id || document.getElementById(naechstePositionUnten).style.background !== "black none repeat scroll 0% 0%"
-    || ueberNaechstePositionUnten !== document.getElementById(ueberNaechstePositionUnten).id || document.getElementById(ueberNaechstePositionUnten).style.background !== "black none repeat scroll 0% 0%"
-    || document.getElementById(naechstePositionUnten).id === null || document.getElementById(ueberNaechstePositionUnten).id ===null) {
+    } else { if (naechstePositionUnten !== document.getElementById(naechstePositionUnten).id || document.getElementById(naechstePositionUnten).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionUnten !== document.getElementById(ueberNaechstePositionUnten).id || document.getElementById(ueberNaechstePositionUnten).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionUnten).id === null || document.getElementById(ueberNaechstePositionUnten).id ===null) {
             console.log("UNTEN NICHT FREI");
             botSteuernLinksWennLinksFrei(message);
         }
@@ -303,18 +303,11 @@ function botSteuernUntenWennUntenFrei(message) {
 }
 
 function botSteuernObenWennObenFrei(message) {
-    let newY = aktuellerBotBike.currentLocation[1] + 1;
-    let secondNewY = aktuellerBotBike.currentLocation[1] +2;
-    let naechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + newY;
-    let ueberNaechstePositionOben = "" + aktuellerBotBike.currentLocation[0] + "-" + secondNewY;
-    if (naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%"
-        && ueberNaechstePositionOben === document.getElementById(ueberNaechstePositionOben).id && document.getElementById(ueberNaechstePositionOben).style.background === "black none repeat scroll 0& 0%") {
+    if (document.getElementById(naechstePositionOben).id !== null && document.getElementById(ueberNaechstePositionOben).id !== null && naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionOben === document.getElementById(ueberNaechstePositionOben).id && document.getElementById(ueberNaechstePositionOben).style.background === "black none repeat scroll 0& 0%") {
         console.log("OBEN FREI");
         steuern('N');
     }
-    else { if (naechstePositionOben !== document.getElementById(naechstePositionOben).id || document.getElementById(naechstePositionOben).style.background !== "black none repeat scroll 0% 0%"
-        || ueberNaechstePositionOben !== document.getElementById(ueberNaechstePositionOben).id || document.getElementById(ueberNaechstePositionOben).style.background !== "black none repeat scroll 0% 0%"
-        || document.getElementById(naechstePositionOben).id === null || document.getElementById(ueberNaechstePositionOben).id ===null) {
+    else { if (naechstePositionOben !== document.getElementById(naechstePositionOben).id || document.getElementById(naechstePositionOben).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionOben !== document.getElementById(ueberNaechstePositionOben).id || document.getElementById(ueberNaechstePositionOben).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionOben).id === null || document.getElementById(ueberNaechstePositionOben).id ===null) {
             console.log("OBEN NICHT FREI");
             botSteuernRechtsWennRechtsFrei(message);
         }
