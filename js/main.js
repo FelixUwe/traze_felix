@@ -61,10 +61,10 @@ function onGrid(message) {
         } else { if (newX !== '' && secondNewX !== '' && newNegativX !== '' && secondNewNegativX !== '' && newY !== '' && secondNewY !== '' && newNegativY !== '' && naechstePositionRechts !== '' &&  ueberNaechstePositionRechts!== '' &&  naechstePositionLinks !== '' && ueberNaechstePositionLinks !== '' &&  naechstePositionUnten !== '' && ueberNaechstePositionUnten !== '' && naechstePositionOben !== '' && ueberNaechstePositionOben !== '') {
             botSteuernRechtsWennRechtsFrei(message);
         } else {
-            botVariablenneuSetzen(message);
+
         }}
     }
-
+    botVariablenneuSetzen(message);
 }
 
 function onTicker(message) {
@@ -267,7 +267,6 @@ function botVariablenneuSetzen(message) {
 function botSteuernRechtsWennRechtsFrei(message) {
     console.log("nächste Position Rechts", naechstePositionRechts);
     console.log("übernächste Position rechts", ueberNaechstePositionRechts);
-    debugger
     if (document.getElementById(naechstePositionRechts).id !== null && document.getElementById(ueberNaechstePositionRechts).id !== null && naechstePositionRechts === document.getElementById(naechstePositionRechts).id && uebernaechstePositionRechts === document.getElementById(uebernaechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
             console.log(document.getElementById(naechstePositionRechts).style.background);
             console.log(document.getElementById(ueberNaechstePositionRechts).style.background);
