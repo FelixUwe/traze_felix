@@ -33,6 +33,11 @@ CLIENT.on('connect', function () {
     });
 });
 
+CLIENT.on('message', function (topic, message) {
+    message = JSON.parse(message);
+    TOPIC_TO_FUNCTION[topic](message);
+});
+
 function onPlayers(message) {
     spielerAnzahl = message.length;
     for (let i = 0; i < spielerAnzahl; i++) {
@@ -41,31 +46,44 @@ function onPlayers(message) {
     playerInformation(message);
 }
 
+function steerToNextFreePosition(tiles) {
+    if (rechtsFrei(tiles)) {
+        steuern('E');
+    }
+    else if (linksFrei(tiles)) {
+        steuern('W');
+    } else if (obenFrei(tiles)) {
+        steuern('N');
+    }
+    else if (untenFrei(tiles)){
+        steuern('S');
+    }
+}
+
 function onMyPlayer(message) {
     secretToken = message.secretUserToken;
     playerId = message.id;
 
-    console.log("set id to ", playerId);
-
     steerTopic = 'traze/1/' + playerId + '/steer';
     bailTopic = 'traze/1/' + playerId + '/bail';
-    // playerInformation(message);
+
+    if (botMode) {
+        x = message.position[0];
+        y = message.position[1];
+        steuern('N');
+    }
+
     return message;
 }
 
 function onGrid(message) {
     drawPlayer(message);
     paintSpawnPoint(message);
-    if (botMode) {
-        if (aktuellerBotBike === '') {
-            console.log("Geschafft");
-            botVariablenneuSetzen(message)
-        } else {
-            botSteuernRechtsWennRechtsFrei(message);
-        }
+
+    if (botMode && x && y) {
+        updateBotPosition(message.bikes);
+        steerToNextFreePosition(message.tiles);
     }
-
-
 }
 
 function onTicker(message) {
@@ -73,10 +91,14 @@ function onTicker(message) {
     toderkennen();
 }
 
-CLIENT.on('message', function (topic, message) {
-    message = JSON.parse(message);
-    TOPIC_TO_FUNCTION[topic](message);
-});
+function updateBotPosition(bikes) {
+    for (let index = 0; index < bikes.length; index++) {
+        if (playerId === bikes[index].playerId) {
+            x = bikes[index].currentLocation[0];
+            y = bikes[index].currentLocation[1];
+        }
+    }
+}
 
 function drawPlayer(gridMessage) {
 
@@ -94,9 +116,7 @@ function drawPlayer(gridMessage) {
                 console.error("cell " + x + "-" + y + " not found");
             }
         }
-
     }
-
 }
 
 function paintSpawnPoint(gridMessage) {
@@ -225,23 +245,13 @@ function bot() {
         name: botName,
         mqttClientName: CLIENT_ID
     };
-
+    botMode = true;
     CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
-
-    setTimeout(function () {
-        steuern('S');
-        botMode = true;
-    }, 1000);
 }
 
 
 function botVariablenneuSetzen(message) {
-    for (let x = 0; x < message.bikes.length; x++) {
-        if (playerId === message.bikes[x].playerId) {
-            aktuellerBotBike = message.bikes[x];
-            console.log("Richtiges Bike gefunden!");
-        }
-    }
+
     x = aktuellerBotBike.currentLocation[0];
     y = aktuellerBotBike.currentLocation[1];
     newX = x + 1;
@@ -268,62 +278,35 @@ function amRechtenRand() {
 }
 
 function amLinkenRand() {
+    return x === 0;
+}
+
+function  amOberennRand() {
     return y === 0;
 }
 
-function botSteuernRechtsWennRechtsFrei(message) {
-    botVariablenneuSetzen(message);
-    console.log("nächste Position Rechts", naechstePositionRechts);
-    console.log("übernächste Position rechts", ueberNaechstePositionRechts);
-    debugger
-    if (!amRechtenRand() && document.getElementById(naechstePositionRechts).id !== '' && document.getElementById(ueberNaechstePositionRechts).id !== '' && naechstePositionRechts === document.getElementById(naechstePositionRechts).id && uebernaechstePositionRechts === document.getElementById(uebernaechstePositionRechts).id && document.getElementById(naechstePositionRechts).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionRechts).style.background === "black none repeat scroll 0% 0%") {
-        console.log(document.getElementById(naechstePositionRechts).style.background);
-        console.log(document.getElementById(ueberNaechstePositionRechts).style.background);
-        console.log("RECHTS FREI");
-        steuern('E');
-    } else {
-        if (naechstePositionRechts !== document.getElementById(naechstePositionRechts).id || document.getElementById(naechstePositionRechts).style.background !== "black none repeat scroll 0% 0%" || uebernaechstePositionRechts !== document.getElementById(ueberNaechstePositionRechts).id || document.getElementById(ueberNaechstePositionRechts).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionRechts).id === null || document.getElementById(uebernaechstePositionRechts).id === null) {
-            console.log("RECHTS nicht FREI");
-            botSteuernUntenWennUntenFrei(message);
-        }
-    }
+function  amUnterenRand() {
+    return y === GRID_SIZE;
 }
 
-function botSteuernLinksWennLinksFrei(message) {
-    if (document.getElementById(naechstePositionLinks).id !== null && document.getElementById(ueberNaechstePositionLinks).id !== null && naechstePositionLinks === document.getElementById(naechstePositionLinks).id && ueberNaechstePositionLinks === document.getElementById(ueberNaechstePositionLinks).id && document.getElementById(naechstePositionLinks).style.background === "black none repeat scroll 0% 0%" && document.getElementById(ueberNaechstePositionLinks).style.background === "black none repeat scroll 0% 0%") {
-        console.log("Links FREI");
-        steuern('W');
-    } else {
-        if (naechstePositionLinks !== document.getElementById(naechstePositionLinks).id || document.getElementById(naechstePositionLinks).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionLinks !== document.getElementById(ueberNaechstePositionLinks).id || document.getElementById(ueberNaechstePositionLinks).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionLinks).id === null || document.getElementById(ueberNaechstePositionLinks).id === null) {
-            console.log("Links NICHT FREI");
-            botSteuernObenWennObenFrei(message);
-        }
-    }
+
+function rechtsFrei(tiles) {
+    return !amRechtenRand() && tiles[x + 1][y] === 0;
 }
 
-function botSteuernUntenWennUntenFrei(message) {
-    if (document.getElementById(naechstePositionUnten).id !== null && document.getElementById(ueberNaechstePositionUnten).id !== null && naechstePositionUnten === document.getElementById(naechstePositionUnten).id && document.getElementById(naechstePositionUnten).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionUnten === document.getElementById(ueberNaechstePositionUnten).id && document.getElementById(ueberNaechstePositionUnten).style.background === "black none repeat scroll 0% 0%") {
-        console.log("UNTEN FREI");
-        steuern('S');
-    } else {
-        if (naechstePositionUnten !== document.getElementById(naechstePositionUnten).id || document.getElementById(naechstePositionUnten).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionUnten !== document.getElementById(ueberNaechstePositionUnten).id || document.getElementById(ueberNaechstePositionUnten).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionUnten).id === null || document.getElementById(ueberNaechstePositionUnten).id === null) {
-            console.log("UNTEN NICHT FREI");
-            botSteuernLinksWennLinksFrei(message);
-        }
-    }
+function linksFrei(tiles) {
+    return !amLinkenRand() && tiles[x - 1][y] === 0;
 }
 
-function botSteuernObenWennObenFrei(message) {
-    if (document.getElementById(naechstePositionOben).id !== null && document.getElementById(ueberNaechstePositionOben).id !== null && naechstePositionOben === document.getElementById(naechstePositionOben).id && document.getElementById(naechstePositionOben).style.background === "black none repeat scroll 0% 0%" && ueberNaechstePositionOben === document.getElementById(ueberNaechstePositionOben).id && document.getElementById(ueberNaechstePositionOben).style.background === "black none repeat scroll 0& 0%") {
-        console.log("OBEN FREI");
-        steuern('N');
-    } else {
-        if (naechstePositionOben !== document.getElementById(naechstePositionOben).id || document.getElementById(naechstePositionOben).style.background !== "black none repeat scroll 0% 0%" || ueberNaechstePositionOben !== document.getElementById(ueberNaechstePositionOben).id || document.getElementById(ueberNaechstePositionOben).style.background !== "black none repeat scroll 0% 0%" || document.getElementById(naechstePositionOben).id === null || document.getElementById(ueberNaechstePositionOben).id === null) {
-            console.log("OBEN NICHT FREI");
-            botSteuernRechtsWennRechtsFrei(message);
-        }
-    }
+function obenFrei(tiles) {
+    return !amOberennRand() && tiles[x][y + 1] === 0;
 }
+
+function untenFrei(tiles) {
+    return !amUnterenRand() && tiles[x][y - 1] === 0;
+}
+
+
 
 function leave() {
     let bailMessage = {playerToken: secretToken};
