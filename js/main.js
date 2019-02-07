@@ -13,16 +13,11 @@ const TOPIC_TO_FUNCTION = {
     'traze/1/ticker': onTicker
 };
 
-let playerId, secretToken, steerTopic, bailTopic, playerCount, deadId, newX, secondNewX, newNegativX, secondNewNegativX,
-    newY, secondNewY, newNegativY, secondNewNegativY, naechstePositionRechts, ueberNaechstePositionRechts,
-    naechstePositionLinks, ueberNaechstePositionLinks, naechstePositionUnten, ueberNaechstePositionUnten,
-    naechstePositionOben, ueberNaechstePositionOben, x, y;
+let playerId, secretToken, steerTopic, bailTopic, deadId, x, y, botName, playerName, tabelle;
 
 let id_to_color = {0: 'BLACK'};
 
 let botMode = false;
-
-let aktuellerBotBike = '';
 
 CLIENT.on('connect', function () {
     let topics = Object.keys(TOPIC_TO_FUNCTION);
@@ -31,6 +26,8 @@ CLIENT.on('connect', function () {
             console.log(err);
         }
     });
+    tabelle = document.getElementById("playerTable");
+    bot();
 });
 
 CLIENT.on('message', function (topic, message) {
@@ -38,24 +35,54 @@ CLIENT.on('message', function (topic, message) {
     TOPIC_TO_FUNCTION[topic](message);
 });
 
-function onPlayers(message) {
-    spielerAnzahl = message.length;
-    for (let i = 0; i < spielerAnzahl; i++) {
-        playerCount = i;
+function onPlayers(players) {
+    tabelle.innerText = '';
+    let headings = document.createElement("tr");
+    headings.className = "kopfzeile";
+    let frags = document.createElement("th");
+    let names = document.createElement("th");
+    frags.innerText = "Frags";
+    names.innerText = "Names";
+    headings.appendChild(names);
+    headings.appendChild(frags);
+    tabelle.appendChild(headings);
+
+    for (let i = 0; i < players.length; i++) {
+        id_to_color[players[i].id] = players[i].color;
+
+        let aktuelleZeile = document.createElement("tr");
+
+        let spalteName = document.createElement("td");
+        let spalteFrags = document.createElement("td");
+
+        spalteName.innerText += players[i].name;
+        spalteFrags.innerText += players[i].frags;
+
+        spalteName.style.color = id_to_color[players[i].id];
+        spalteFrags.style.color = id_to_color[players[i].id];
+
+        aktuelleZeile.appendChild(spalteName);
+        aktuelleZeile.appendChild(spalteFrags);
+        tabelle.appendChild(aktuelleZeile);
     }
-    playerInformation(message);
 }
 
 function steerToNextFreePosition(tiles) {
-    if (rechtsFrei(tiles)) {
+    if (rechtsGanzFrei(tiles)) {
         steuern('E');
-    }
-    else if (linksFrei(tiles)) {
+    } else if (linksGanzFrei(tiles)) {
+        steuern('W');
+    } else if (obenGanzFrei(tiles)) {
+        steuern('N');
+    } else if (untenGanzFrei(tiles)) {
+        steuern('S');
+    } else if (rechtsFrei(tiles)) {
+        steuern('E');
+    } else if (linksFrei(tiles)) {
         steuern('W');
     } else if (obenFrei(tiles)) {
         steuern('N');
-    }
-    else if (untenFrei(tiles)){
+    } else {
         steuern('S');
     }
 }
@@ -128,23 +155,15 @@ function paintSpawnPoint(gridMessage) {
     }
 }
 
-function playerInformation(message) {
-
-    document.getElementById('tf1').innerText = '';
-    document.getElementById('tf2').innerText = '';
-    for (player of message) {
-
-        document.getElementById('tf1').innerText += player.name + '\n';
-        document.getElementById('tf2').innerText += player.frags + '\n';
-        id_to_color[player.id] = player.color;
-
-    }
-}
-
 function joinGame() {
     botMode = false;
+    if (document.getElementById("playerNameInput").value === "") {
+        playerName = "Superman";
+    } else {
+        playerName = document.getElementById("playerNameInput").value;
+    }
 
-    let playerName = document.getElementById("playerNameInput").value;
+
     let joinMsg = {
         name: playerName,
         mqttClientName: CLIENT_ID
@@ -170,7 +189,10 @@ function toderkennen() {
                 steerButton.classList.remove("deaktiviert");
             }
         }
-        botMode = false;
+
+        if (botMode) {
+            bot();
+        }
     }
 
 }
@@ -238,7 +260,11 @@ function disableSteerButtons() {
 }
 
 function bot() {
-    let botName = document.getElementById("botnameInput").value;
+    if (document.getElementById("botnameInput").value === "") {
+        botName = "Superbot";
+    } else {
+        botName = document.getElementById("botnameInput").value;
+    }
     disableSteerButtons();
 
     let joinMsg = {
@@ -249,30 +275,6 @@ function bot() {
     CLIENT.publish(JOIN_TOPIC, JSON.stringify(joinMsg));
 }
 
-
-function botVariablenneuSetzen(message) {
-
-    x = aktuellerBotBike.currentLocation[0];
-    y = aktuellerBotBike.currentLocation[1];
-    newX = x + 1;
-    secondNewX = x + 2;
-    naechstePositionRechts = "" + newX + "-" + y;
-    ueberNaechstePositionRechts = "" + secondNewX + "-" + y;
-    newNegativX = x - 1;
-    secondNewNegativX = x - 2;
-    naechstePositionLinks = "" + newNegativX + "" + y;
-    ueberNaechstePositionLinks = "" + secondNewNegativX + "" + y;
-    newNegativY = y - 1;
-    secondNewNegativY = y - 2;
-    naechstePositionUnten = "" + x + "-" + newNegativY;
-    ueberNaechstePositionUnten = "" + x + "-" + secondNewNegativY;
-    newY = y + 1;
-    secondNewY = y + 2;
-    naechstePositionOben = "" + x + "-" + newY;
-    ueberNaechstePositionOben = "" + x + "-" + secondNewY;
-    console.log("ALL SET");
-}
-
 function amRechtenRand() {
     return x === GRID_SIZE;
 }
@@ -281,14 +283,13 @@ function amLinkenRand() {
     return x === 0;
 }
 
-function  amOberennRand() {
+function amOberennRand() {
     return y === 0;
 }
 
-function  amUnterenRand() {
+function amUnterenRand() {
     return y === GRID_SIZE;
 }
-
 
 function rechtsFrei(tiles) {
     return !amRechtenRand() && tiles[x + 1][y] === 0;
@@ -306,6 +307,21 @@ function untenFrei(tiles) {
     return !amUnterenRand() && tiles[x][y - 1] === 0;
 }
 
+function rechtsGanzFrei(tiles) {
+    return rechtsFrei(tiles) && x < GRID_SIZE - 1 && tiles[x + 2][y] === 0;
+}
+
+function linksGanzFrei(tiles) {
+    return linksFrei(tiles) && x > 1 && tiles[x - 2][y] === 0;
+}
+
+function obenGanzFrei(tiles) {
+    return obenFrei(tiles) && tiles[x][y + 2] === 0;
+}
+
+function untenGanzFrei(tiles) {
+    return untenFrei(tiles) && tiles[x][y - 2] === 0;
+}
 
 
 function leave() {

@@ -10,8 +10,8 @@
 </head>
 <body class="background" onload="showGrid()">
 <div>
-    <input class="eingabeFeld" id="playerNameInput" placeholder="Spielername" type="text" />
-    <input class="eingabeFeld" id="botnameInput" placeholder="Botname" type="text" />
+    <input class="eingabeFeld" id="playerNameInput" placeholder="Spielername" type="text"/>
+    <input class="eingabeFeld" id="botnameInput" placeholder="Botname" type="text"/>
     <button onclick="joinGame()" class="traze-button">Join Game</button>
     <button onclick="test()" class="traze-button">test</button>
     <button onclick="leave()" class="traze-button">leave</button>
@@ -29,36 +29,13 @@
 </div>
 <div id="Spielfeld">
     <div class="container">
-    </div >
+    </div>
 </div>
 <div class="spielerinfo">
     <h2 class="heading1"> Player information: </h2>
-    <table class="tabelle">
-        <tr class="kopfzeile">
-            <th>Player</th>
-            <th>Frags</th>
-        </tr>
-        <tr>
-            <td id="tf1"></td>
-            <td id="tf2" ></td>
-        </tr>
-
+    <table id="playerTable" class="tabelle">
     </table>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 </body>
