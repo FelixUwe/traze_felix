@@ -19,7 +19,24 @@ let id_to_color = {0: 'BLACK'};
 
 let botMode = false;
 
+function muteMusic() {
+    if (backgroundMusic.muted = false){
+    backgroundMusic.muted = true;
+    } else {
+        backgroundMusic.muted = false;
+    }
+}
+
 CLIENT.on('connect', function () {
+    // TODO mute button
+    backgroundMusic = document.getElementById("backgroundMusic");
+    joinMusic = document.getElementById("joinMusic");
+    monsterkillMusic = document.getElementById("monsterkillMusic");
+    deathMusic = document.getElementById("deathMusic");
+
+    backgroundMusic.play();
+    document.getElementById("backgroundMusic").loop = true;
+
     let topics = Object.keys(TOPIC_TO_FUNCTION);
     CLIENT.subscribe(topics, function (err) {
         if (err) {
@@ -156,6 +173,8 @@ function paintSpawnPoint(gridMessage) {
 }
 
 function joinGame() {
+
+    joinMusic.play();
     botMode = false;
     if (document.getElementById("playerNameInput").value === "") {
         playerName = "Superman";
@@ -181,6 +200,7 @@ function toderkennen() {
     let index = '';
 
     if (deadId == playerId) {
+        deathMusic.play()
         document.removeEventListener('keydown', eventListener);
         for (let index = 0; index < steerButtonList.length; index++) {
             let steerButton = steerButtonList[index];
@@ -193,6 +213,8 @@ function toderkennen() {
         if (botMode) {
             bot();
         }
+    } else {
+        monsterkillMusic.play();
     }
 
 }
