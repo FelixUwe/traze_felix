@@ -20,15 +20,27 @@ let id_to_color = {0: 'BLACK'};
 let botMode = false;
 
 function muteMusic() {
-    if (backgroundMusic.muted = false){
-    backgroundMusic.muted = true;
-    } else {
+    if (backgroundMusic.muted === false) {
+        backgroundMusic.muted = true;
+    } else if (backgroundMusic.muted === true) {
         backgroundMusic.muted = false;
     }
 }
 
+function muteGameSounds() {
+    if (joinMusic.muted === false) {
+        monsterkillMusic.muted = true;
+        deathMusic.muted = true;
+        joinMusic.muted = true;
+    } else {
+        monsterkillMusic.muted = false;
+        deathMusic.muted = false;
+        joinMusic.muted = false;
+    }
+
+}
+
 CLIENT.on('connect', function () {
-    // TODO mute button
     backgroundMusic = document.getElementById("backgroundMusic");
     joinMusic = document.getElementById("joinMusic");
     monsterkillMusic = document.getElementById("monsterkillMusic");
@@ -95,10 +107,10 @@ function steerToNextFreePosition(tiles) {
         steuern('S');
     } else if (rechtsFrei(tiles)) {
         steuern('E');
-    } else if (linksFrei(tiles)) {
-        steuern('W');
     } else if (obenFrei(tiles)) {
         steuern('N');
+    } else if (linksFrei(tiles)) {
+        steuern('W');
     } else {
         steuern('S');
     }
@@ -114,10 +126,25 @@ function onMyPlayer(message) {
     if (botMode) {
         x = message.position[0];
         y = message.position[1];
-        steuern('N');
+        steuernWoFreiIst(message);
     }
 
     return message;
+}
+
+function steuernWoFreiIst(message) {
+    let spawnpoint = message.position;
+    if (spawnpoint[0] === 61) {
+        steuern('S');
+    } else if (spawnpoint[0] === 0) {
+        steuern('N');
+    } else if (spawnpoint[1] === 61 && spawnpoint[0] !== 0 || 61) {
+        steuern('W');
+    } else if (spawnpoint[1] === 0 && spawnpoint[0] !== 0 || 61) {
+        steuern('E');
+    } else {
+        steuern('N');
+    }
 }
 
 function onGrid(message) {
@@ -281,6 +308,10 @@ function disableSteerButtons() {
     }
 }
 
+function spielErklaerung() {
+   alert("Hi!\nSo funktioniert Traze:\nDu musst mit deinem Charakter so lange überleben wie es geht!\nDafür usst du die Gegner ausschalten und auf dem 62x62 Feld den Platz so gut nutzen, wie es geht.\nDu kannst mit WASD oder den Buttons auf der Website steuern.\nViel Spaß! ");
+}
+
 function bot() {
     if (document.getElementById("botnameInput").value === "") {
         botName = "Superbot";
@@ -305,7 +336,7 @@ function amLinkenRand() {
     return x === 0;
 }
 
-function amOberennRand() {
+function amOberenRand() {
     return y === 0;
 }
 
@@ -322,7 +353,7 @@ function linksFrei(tiles) {
 }
 
 function obenFrei(tiles) {
-    return !amOberennRand() && tiles[x][y + 1] === 0;
+    return !amOberenRand() && tiles[x][y + 1] === 0;
 }
 
 function untenFrei(tiles) {
