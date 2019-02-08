@@ -8,56 +8,70 @@
     <meta charset="UTF-8">
     <title>Traze</title>
 </head>
+
 <body class="background" onload="showGrid()">
-<div>
-    <input class="eingabeFeld" id="playerNameInput" placeholder="Spielername" type="text" />
-    <button onclick="joinGame()" class="traze-button">Join Game</button>
-    <button onclick="test()" class="traze-button">test</button>
-    <button onclick="leave()" class="traze-button">leave</button>
-    <button onclick="selbstmordBot()" class="traze-button">Selbstmordbot</button>
+
+<div class="menu">
+
+    <div class="eingabeFeld">
+        <input id="playerNameInput" placeholder="Spielername" type="text"/>
+        <input id="botnameInput" placeholder="Botname" type="text"/>
+    </div>
+
     <h3 class="h3">Traze</h3>
+
+    <div class="menu-buttons">
+        <button onclick="joinGame()" class="traze-button">Join Game</button>
+        <button onclick="test()" class="traze-button">test</button>
+        <button onclick="leave()" class="traze-button">leave</button>
+        <button onclick="selbstmordBot()" class="traze-button">Selbstmordbot</button>
+        <button onclick="bot()" class="traze-button">Bot</button>
+        <button onclick="muteMusic()" class="traze-button">Musik stummstellen/lautstellen</button>
+        <button onclick="muteGameSounds()" class="traze-button">Gamesounds stummstellen</button>
+        <button onclick="spielErklaerung()" class="traze-button">Hilfe</button>
+    </div>
+
+
 </div>
-<div class="Steuerknöpfe">
-    <button class="traze-button extra-margin" onclick="steuern('N')">↑Oben</button>
-    <br>
-    <button class="traze-button" onclick="steuern('W')">←Links</button>
-    <button class="traze-button" onclick="steuern('E')">Rechts→</button>
-    <br>
-    <button class="traze-button extra-margin" onclick="steuern('S')">↓Unten</button>
-</div>
-<div id="Spielfeld">
-    <div class="container">
-    </div >
-</div>
-<div class="spielerinfo">
-    <h2 class="heading1"> Player information: </h2>
-    <table class="tabelle">
-        <tr class="kopfzeile">
-            <th>Player</th>
-            <th>Frags</th>
-        </tr>
-        <tr>
-            <td id="tf1"></td>
-            <td id="tf2" ></td>
-        </tr>
+<div class="container">
+    <div class="Steuerknöpfe">
+        <button class="traze-button extra-margin steer-button" onclick="steuern('N')">↑Oben</button>
+        <br>
+        <button class="traze-button steer-button" onclick="steuern('W')">←Links</button>
+        <button class="traze-button steer-button" onclick="steuern('E')">Rechts→</button>
+        <br>
+        <button class="traze-button extra-margin steer-button" onclick="steuern('S')">↓Unten</button>
+    </div>
+    <div id="Spielfeld">
 
-    </table>
+    </div>
+    <div class="spielerinfo">
+        <h2 class="heading1"> Player information: </h2>
+        <table id="playerTable" class="tabelle">
+        </table>
+    </div>
 </div>
 
 
+<audio id="backgroundMusic">
+    <source src="sounds/background.wav" type="audio/wav">
+    Bitte nimm einen anständigen Browser!
+</audio>
 
+<audio id="joinMusic">
+    <source src="sounds/join.wav" type="audio/wav">
+    Bitte nimm einen anständigen Browser!
+</audio>
 
+<audio id="monsterkillMusic">
+    <source src="sounds/Monsterkill_F.wav" type="audio/wav">
+    Bitte nimm einen anständigen Browser!
+</audio>
 
-
-
-
-
-
-
-
-
-
-
+<audio id="deathMusic">
+    <source src="sounds/death.wav" type="audio/wav">
+    Bitte nimm einen anständigen Browser!
+</audio>
 
 </body>
 </html>
