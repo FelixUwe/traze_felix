@@ -61,7 +61,7 @@ CLIENT.on('connect', function () {
 
 CLIENT.on('message', function (topic, message) {
     message = JSON.parse(message);
-    //TOPIC_TO_FUNCTION[topic](message);
+    TOPIC_TO_FUNCTION[topic](message);
 });
 
 function onPlayers(players) {
