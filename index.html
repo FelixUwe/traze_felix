@@ -8,37 +8,50 @@
     <meta charset="UTF-8">
     <title>Traze</title>
 </head>
+
 <body class="background" onload="showGrid()">
-<div>
-    <input class="eingabeFeld" id="playerNameInput" placeholder="Spielername" type="text"/>
-    <input class="eingabeFeld" id="botnameInput" placeholder="Botname" type="text"/>
-    <button onclick="joinGame()" class="traze-button">Join Game</button>
-    <button onclick="test()" class="traze-button">test</button>
-    <button onclick="leave()" class="traze-button">leave</button>
-    <button onclick="selbstmordBot()" class="traze-button">Selbstmordbot</button>
-    <button onclick="bot()" class="traze-button">Bot</button>
-    <button onclick="muteMusic()" class="traze-button">Musik stummstellen/lautstellen</button>
-    <button onclick="muteGameSounds()" class="traze-button">Gamesounds stummstellen</button>
-    <button onclick="spielErklaerung()" class="traze-button">Hilfe</button>
+
+<div class="menu">
+
+    <div class="eingabeFeld">
+        <input id="playerNameInput" placeholder="Spielername" type="text"/>
+        <input id="botnameInput" placeholder="Botname" type="text"/>
+    </div>
+
     <h3 class="h3">Traze</h3>
+
+    <div class="menu-buttons">
+        <button onclick="joinGame()" class="traze-button">Join Game</button>
+        <button onclick="test()" class="traze-button">test</button>
+        <button onclick="leave()" class="traze-button">leave</button>
+        <button onclick="selbstmordBot()" class="traze-button">Selbstmordbot</button>
+        <button onclick="bot()" class="traze-button">Bot</button>
+        <button onclick="muteMusic()" class="traze-button">Musik stummstellen/lautstellen</button>
+        <button onclick="muteGameSounds()" class="traze-button">Gamesounds stummstellen</button>
+        <button onclick="spielErklaerung()" class="traze-button">Hilfe</button>
+    </div>
+
+
 </div>
-<div class="Steuerknöpfe">
-    <button class="traze-button extra-margin steer-button" onclick="steuern('N')">↑Oben</button>
-    <br>
-    <button class="traze-button steer-button" onclick="steuern('W')">←Links</button>
-    <button class="traze-button steer-button" onclick="steuern('E')">Rechts→</button>
-    <br>
-    <button class="traze-button extra-margin steer-button" onclick="steuern('S')">↓Unten</button>
-</div>
-<div id="Spielfeld">
-    <div class="container">
+<div class="container">
+    <div class="Steuerknöpfe">
+        <button class="traze-button extra-margin steer-button" onclick="steuern('N')">↑Oben</button>
+        <br>
+        <button class="traze-button steer-button" onclick="steuern('W')">←Links</button>
+        <button class="traze-button steer-button" onclick="steuern('E')">Rechts→</button>
+        <br>
+        <button class="traze-button extra-margin steer-button" onclick="steuern('S')">↓Unten</button>
+    </div>
+    <div id="Spielfeld">
+
+    </div>
+    <div class="spielerinfo">
+        <h2 class="heading1"> Player information: </h2>
+        <table id="playerTable" class="tabelle">
+        </table>
     </div>
 </div>
-<div class="spielerinfo">
-    <h2 class="heading1"> Player information: </h2>
-    <table id="playerTable" class="tabelle">
-    </table>
-</div>
+
 
 <audio id="backgroundMusic">
     <source src="sounds/background.wav" type="audio/wav">

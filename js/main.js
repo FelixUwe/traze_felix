@@ -56,18 +56,18 @@ CLIENT.on('connect', function () {
         }
     });
     tabelle = document.getElementById("playerTable");
-    bot();
+    //bot();
 });
 
 CLIENT.on('message', function (topic, message) {
     message = JSON.parse(message);
-    TOPIC_TO_FUNCTION[topic](message);
+    //TOPIC_TO_FUNCTION[topic](message);
 });
 
 function onPlayers(players) {
     tabelle.innerText = '';
     let headings = document.createElement("tr");
-    headings.className = "kopfzeile";
+    headings.setAttribute("align", "left");
     let frags = document.createElement("th");
     let names = document.createElement("th");
     frags.innerText = "Frags";
@@ -126,25 +126,9 @@ function onMyPlayer(message) {
     if (botMode) {
         x = message.position[0];
         y = message.position[1];
-        steuernWoFreiIst(message);
     }
 
     return message;
-}
-
-function steuernWoFreiIst(message) {
-    let spawnpoint = message.position;
-    if (spawnpoint[0] === 61) {
-        steuern('S');
-    } else if (spawnpoint[0] === 0) {
-        steuern('N');
-    } else if (spawnpoint[1] === 61 && spawnpoint[0] !== 0 || 61) {
-        steuern('W');
-    } else if (spawnpoint[1] === 0 && spawnpoint[0] !== 0 || 61) {
-        steuern('E');
-    } else {
-        steuern('N');
-    }
 }
 
 function onGrid(message) {
@@ -226,8 +210,8 @@ function toderkennen() {
 
     let index = '';
 
-    if (deadId == playerId) {
-        deathMusic.play()
+    if (deadId === playerId) {
+        deathMusic.play();
         document.removeEventListener('keydown', eventListener);
         for (let index = 0; index < steerButtonList.length; index++) {
             let steerButton = steerButtonList[index];
@@ -243,6 +227,7 @@ function toderkennen() {
     } else {
         monsterkillMusic.play();
     }
+
 
 }
 
@@ -309,7 +294,7 @@ function disableSteerButtons() {
 }
 
 function spielErklaerung() {
-   alert("Hi!\nSo funktioniert Traze:\nDu musst mit deinem Charakter so lange überleben wie es geht!\nDafür usst du die Gegner ausschalten und auf dem 62x62 Feld den Platz so gut nutzen, wie es geht.\nDu kannst mit WASD oder den Buttons auf der Website steuern.\nViel Spaß! ");
+    alert("Hi!\nSo funktioniert Traze:\nDu musst mit deinem Charakter so lange überleben wie es geht!\nDafür usst du die Gegner ausschalten und auf dem 62x62 Feld den Platz so gut nutzen, wie es geht.\nDu kannst mit WASD oder den Buttons auf der Website steuern.\nViel Spaß! ");
 }
 
 function bot() {
